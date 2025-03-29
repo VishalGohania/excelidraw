@@ -1,16 +1,15 @@
-"use client"
+"use client";
 
-export function AuthPage({isSignin}: {
-  isSignin: boolean
-}) {
-  return <div className="h-screen w-screen flex justify-center items-center">
-    <div className="p-2 m-2 bg-white rounded">
-      <input type="text" placeholder="Email"></input>
-      <input type="password" placeholder="Password"></input>
+import SignIn from "@/app/(auth)/signin/page";
+import Signup from "@/app/(auth)/signup/page";
 
-      <button onClick={() => {
 
-      }}>{isSignin ? 'Sign in': 'Sign up'}</button>
+export function AuthPage({ isSignin }: { isSignin: boolean }) {
+  return (
+    <div className="flex min-h-svh w-full items-center justify-center p-6 md:p-10">
+      <div className="w-full max-w-sm">
+        {isSignin ? <SignIn /> : <Signup />}
+      </div>
     </div>
-  </div>
+  );
 }
