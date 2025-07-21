@@ -5,13 +5,18 @@ import { middleware } from "./middleware";
 import jwt from "jsonwebtoken";
 import { prismaClient } from "@repo/db/client"
 import cors from "cors";
+import bcrypt from 'bcrypt';
+import { authRoutes } from "./routes/auth";
 
 const app = express();
 app.use(express.json());
 app.use(cors());
 
-app.post("/signup", async (req, res) => {
+// Auth routes for NextAuth
+app.use("/auth", authRoutes);
 
+// Legacy endpoints (keeping for backward compatibility)
+app.post("/signup", async (req, res) => {
   const parsedData = CreateUserSchema.safeParse(req.body);
   if(!parsedData.success) {
     console.log(parsedData.error)
@@ -22,10 +27,11 @@ app.post("/signup", async (req, res) => {
   }
   //db call
   try {
+    const hashedPassword = await bcrypt.hash(parsedData.data.password, 10);
     const user = await prismaClient.user.create({
     data: {
       email: parsedData.data?.username,
-      password: parsedData.data.password,
+      password: hashedPassword,
       name: parsedData.data.name
     }   
   })
@@ -52,12 +58,11 @@ app.post("/signin", async (req, res) => {
     const user = await prismaClient.user.findFirst({
       where: {
         email: parsedData.data?.username,
-        password: parsedData.data?.password
       }     
     })
-   if(!user) {
+   if(!user || !await bcrypt.compare(parsedData.data.password, user.password)) {
     res.status(403).json({
-      message: "Not authorised"
+      message: "Invalid credentials"
     })
     return;
   }
@@ -128,4 +133,34 @@ app.get("/room/:slug", async (req, res) => {
   })
 })
 
-app.listen(3001);
+// Function to try different ports
+function startServer(ports: number[]) {
+  let currentPortIndex = 0;
+
+  function tryNextPort() {
+    if(currentPortIndex >= ports.length) {
+      console.error('all ports are in use');
+      return;
+    }
+
+    const port = ports[currentPortIndex];
+    const server = app.listen(port)
+    .on('error', (err: any) => {
+      if(err.code === 'EADDRINUSE') {
+        console.log(`Port ${port} is in use, trying next port...`);
+        currentPortIndex++;
+        tryNextPort();
+      } else {
+        console.error('Server error:', err);
+      }
+    })
+    .on('listening', () => {
+      console.log(`Server running on port ${port}`);
+      // Export the current port for frontend use
+      process.env.HTTP_PORT = port?.toString();
+    })
+  }
+  tryNextPort();
+}
+
+startServer([3000, 3001, 3002]);

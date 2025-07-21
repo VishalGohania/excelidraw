@@ -1,4 +1,3 @@
-import { initDraw } from "@/draw";
 import { useEffect, useRef, useState } from "react";
 import { IconButton } from "./IconButton";
 import { Circle, Pencil, RectangleHorizontal } from "lucide-react";
@@ -27,7 +26,7 @@ export function Canvas({roomId, socket}: {
         g.destroy();
       }
     }
-  },[canvasRef]);
+  },[canvasRef, roomId, socket]);
 
   return <div className="h-screen overflow-hidden">
     <canvas ref={canvasRef} width={window.innerWidth} height={window.innerHeight}></canvas>

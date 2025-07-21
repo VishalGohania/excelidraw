@@ -1,23 +1,47 @@
 "use client";
 
 import { WS_URL } from "@/config";
-import { use, useEffect, useRef, useState } from "react";
+import {  useEffect, useState } from "react";
 import { Canvas } from "./Canvas";
+import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 
 export function RoomCanvas({roomId}: {roomId: string} ) {
   const [socket, setSocket] = useState<WebSocket | null>(null);
+  const router = useRouter();
+  const { data: session, status } = useSession();
 
   useEffect(() => {
-    const ws = new WebSocket(`${WS_URL}?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI0NzY2YmMwNy0yNjBjLTQ1ODgtOTQ4Yi1hZTU5OWU1ZjQwZGEiLCJpYXQiOjE3NDA1NjgxOTF9.nGku9dupsxgi82rvE4NAGySV3MB1K19ml5uy3JzOvzM`);
+    if(status === "unauthenticated") {
+      router.push("/auth");
+      return;
+    }
+    
+    if(status !== "authenticated" || !session) {
+      return;
+    }
+    
+    const ws = new WebSocket(`${WS_URL}?sessionId=${session.user.id}`);
 
     ws.onopen = () => {
       setSocket(ws);
       ws.send(JSON.stringify({
         type: "join_room",
-        roomId
+        roomId: roomId
       }))
+    };
+    
+    ws.onerror = (error) => {
+      console.error('WebSocket error:', error);
+    };
+
+    ws.onclose = (event) => {
+      if(event.code === 1008) {
+        // Authentication error
+        router.push("/auth")
+      }
     }
-  },[])
+  },[roomId, router, session, status])
 
   if(!socket) {
     return <div>
