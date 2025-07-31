@@ -3,7 +3,7 @@ import { JWT_SECRET } from "@repo/backend-common/config";
 import {CreateRoomSchema, CreateUserSchema, SigninSchema} from "@repo/common/types";
 import { middleware } from "./middleware";
 import jwt from "jsonwebtoken";
-import { prismaClient } from "@repo/db/client"
+import prisma from "@repo/db";
 import cors from "cors";
 import bcrypt from 'bcrypt';
 import { authRoutes } from "./routes/auth";
@@ -28,21 +28,21 @@ app.post("/signup", async (req, res) => {
   //db call
   try {
     const hashedPassword = await bcrypt.hash(parsedData.data.password, 10);
-    const user = await prismaClient.user.create({
+    const user = await prisma.user.create({
     data: {
       email: parsedData.data?.username,
       password: hashedPassword,
       name: parsedData.data.name
     }   
-  })
-  res.json({
-    userId: user.id
-  })
-} catch(e) {
+    })
+    res.json({
+      userId: user.id
+    })
+  } catch(e) {
   res.status(411).json({
     message: "User already exists with this username"
   })
-}
+  }
   
 })
 
@@ -55,7 +55,7 @@ app.post("/signin", async (req, res) => {
     return;
   }
   //db call
-    const user = await prismaClient.user.findFirst({
+    const user = await prisma.user.findFirst({
       where: {
         email: parsedData.data?.username,
       }     
@@ -87,7 +87,7 @@ app.post("/room", middleware, async (req, res) => {
   const userId = req.userId;
   //db
   try {
-    const room = await prismaClient.room.create({
+    const room = await prisma.room.create({
       data: {
         slug: parsedData.data.name,
         adminId: userId!
@@ -104,25 +104,52 @@ app.post("/room", middleware, async (req, res) => {
 })
 
 app.get("/chats/:roomId", async (req, res) => {
-  const roomId = Number(req.params.roomId);
-  const messages = await prismaClient.chat.findMany({
-    where: {
-      roomId: roomId
-    },
-    orderBy:{
-      id: "desc"
-    },
-    take: 1000
-  });
+  try {
+    const roomIdParam = req.params.roomId;
+    
+    // Validate that roomId exists and is a valid number
+    if (!roomIdParam || isNaN(Number(roomIdParam))) {
+      res.status(400).json({
+        message: "Invalid room ID. Room ID must be a valid number."
+      });
+      return;
+    }
+    
+    const roomId = Number(roomIdParam);
+    
+    // Additional check to ensure it's a positive integer
+    if (roomId <= 0 || !Number.isInteger(roomId)) {
+      res.status(400).json({
+        message: "Room ID must be a positive integer."
+      });
+      return;
+    }
+    
+    const messages = await prisma.chat.findMany({
+      where: {
+        roomId: roomId
+      },
+      orderBy: {
+        id: "desc"
+      },
+      take: 1000
+    });
 
-  res.json({
-    messages
-  })
-})
+    res.json({
+      messages
+    });
+    
+  } catch (error) {
+    console.error("Error fetching chats:", error);
+    res.status(500).json({
+      message: "Internal server error"
+    });
+  }
+});
 
 app.get("/room/:slug", async (req, res) => {
   const slug = req.params.slug;
-  const room = await prismaClient.room.findFirst({
+  const room = await prisma.room.findFirst({
     where: {
       slug
     }
@@ -133,34 +160,36 @@ app.get("/room/:slug", async (req, res) => {
   })
 })
 
-// Function to try different ports
-function startServer(ports: number[]) {
-  let currentPortIndex = 0;
+// // Function to try different ports
+// function startServer(ports: number[]) {
+//   let currentPortIndex = 0;
 
-  function tryNextPort() {
-    if(currentPortIndex >= ports.length) {
-      console.error('all ports are in use');
-      return;
-    }
+//   function tryNextPort() {
+//     if(currentPortIndex >= ports.length) {
+//       console.error('all ports are in use');
+//       return;
+//     }
 
-    const port = ports[currentPortIndex];
-    const server = app.listen(port)
-    .on('error', (err: any) => {
-      if(err.code === 'EADDRINUSE') {
-        console.log(`Port ${port} is in use, trying next port...`);
-        currentPortIndex++;
-        tryNextPort();
-      } else {
-        console.error('Server error:', err);
-      }
-    })
-    .on('listening', () => {
-      console.log(`Server running on port ${port}`);
-      // Export the current port for frontend use
-      process.env.HTTP_PORT = port?.toString();
-    })
-  }
-  tryNextPort();
-}
+//     const port = ports[currentPortIndex];
+//     const server = app.listen(port)
+//     .on('error', (err: any) => {
+//       if(err.code === 'EADDRINUSE') {
+//         console.log(`Port ${port} is in use, trying next port...`);
+//         currentPortIndex++;
+//         tryNextPort();
+//       } else {
+//         console.error('Server error:', err);
+//       }
+//     })
+//     .on('listening', () => {
+//       console.log(`Server running on port ${port}`);
+//       // Export the current port for frontend use
+//       process.env.HTTP_PORT = port?.toString();
+//     })
+//   }
+//   tryNextPort();
+// }
 
-startServer([3000, 3001, 3002]);
+// startServer([3001, 3002]);
+
+app.listen(3001);

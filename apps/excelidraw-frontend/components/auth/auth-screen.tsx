@@ -11,10 +11,10 @@ export default function AuthScreen({ authType }: { authType?: SignInFlow }) {
     <div className="w-full flex items-center justify-center gap-5">
       <div className="w-full md:h-auto md:w-[420px] px-4">
         {formType === "signIn" ? (
-            <SigninCard setFormType={setFormType} /> 
-          
+          <SigninCard setFormType={setFormType} />
+
         ) : (
-            <SignupCard setFormType={setFormType} />  
+          <SignupCard setFormType={setFormType} />
         )}
       </div>
     </div>

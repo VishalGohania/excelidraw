@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import bcrypt from "bcrypt";
-import { prismaClient } from "@repo/db/client";
+import prisma from "@repo/db";
 
 export const authController = {
   // NextAuth login endpoint
@@ -9,7 +9,7 @@ export const authController = {
       const { email, password } = req.body;
 
       // Find user by email
-      const user = await prismaClient.user.findUnique({
+      const user = await prisma.user.findUnique({
         where: { email }
       });
 
@@ -45,7 +45,7 @@ export const authController = {
       const { email, password, name } = req.body;
 
       // Check if user already exists
-      const existingUser = await prismaClient.user.findUnique({
+      const existingUser = await prisma.user.findUnique({
         where: { email }
       });
 
@@ -58,7 +58,7 @@ export const authController = {
       const hashedPassword = await bcrypt.hash(password, 10);
 
       // Create new user
-      const user = await prismaClient.user.create({
+      const user = await prisma.user.create({
         data: {
           email,
           password: hashedPassword,
@@ -91,13 +91,13 @@ export const authController = {
       }
 
       // Check if user already exists
-      let user = await prismaClient.user.findUnique({
+      let user = await prisma.user.findUnique({
         where: { email }
       });
 
       if (!user) {
         // Create new user for Google OAuth
-        user = await prismaClient.user.create({
+        user = await prisma.user.create({
           data: {
             email,
             name: name || email.split('@')[0], // Use email prefix if no name

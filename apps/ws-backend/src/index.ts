@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 import { WebSocketServer, WebSocket } from "ws";
 import { JWT_SECRET } from '@repo/backend-common/config'
-import { prismaClient } from "@repo/db/client";
+import prisma from "@repo/db";
 
 const wss = new WebSocketServer({ port: 8080 });
 
@@ -17,7 +17,7 @@ const users: User[] = [];
 async function getUserFromSessionId(sessionId: string): Promise<{ userId: string, name: string } | null> {
   try {
     // Find user by ID directly since we're now passing the user ID from NextAuth session
-    const user = await prismaClient.user.findUnique({
+    const user = await prisma.user.findUnique({
       where: { id: sessionId }
     });
     
@@ -52,7 +52,7 @@ async function getUserFromSessionId(sessionId: string): Promise<{ userId: string
   }
 
   // Get user details from database
-  const user = await prismaClient.user.findUnique({
+  const user = await prisma.user.findUnique({
     where: { id: userInfo.userId}
   })
 
@@ -89,7 +89,7 @@ async function getUserFromSessionId(sessionId: string): Promise<{ userId: string
         const user = users.find(x => x.ws === ws);
         user?.rooms.push(parsedData.roomId);
         
-        const room = await prismaClient.room.findUnique({
+        const room = await prisma.room.findUnique({
           where: { id: Number(parsedData.roomId)}
         });
 
@@ -125,7 +125,7 @@ async function getUserFromSessionId(sessionId: string): Promise<{ userId: string
         const message = parsedData.message;
       
       // save message to database
-      await prismaClient.chat.create({
+      await prisma.chat.create({
         data: {
           roomId: Number(roomId),
           message,

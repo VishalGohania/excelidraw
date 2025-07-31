@@ -24,6 +24,7 @@ interface SignupCardProps {
 export default function SignupCard({ setFormType: setState }: SignupCardProps) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [name, setName] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
   const [pending, setPending] = useState(false);
@@ -34,7 +35,9 @@ export default function SignupCard({ setFormType: setState }: SignupCardProps) {
       if (provider === "credentials") {
         const res = await signIn(provider, {
           email,
+          name,
           password,
+          action: "signup",
           redirect: false,
           callbackUrl: "/room",
         });
@@ -106,6 +109,15 @@ export default function SignupCard({ setFormType: setState }: SignupCardProps) {
         )}
         <CardContent className="space-y-6 px-0 pb-0">
           <form className="space-y-4" onSubmit={handlerCredentialSignup}>
+            <Input
+              disabled={pending}
+              value={name}
+              placeholder="Name"
+              onChange={(e) => setName(e.target.value)}
+              className="border-gray-400 bg-transparent text-white placeholder:text-gray-400 focus-visible:ring-purple-600 focus-visible:ring-offset-0"
+              type="text"
+              required
+            />
             <Input
               disabled={pending}
               value={email}

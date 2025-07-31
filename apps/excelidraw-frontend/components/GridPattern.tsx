@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion } from 'framer-motion';
 import { useEffect, useId, useRef, useState } from "react";
 
 function Block({

@@ -1,12 +1,11 @@
 'use client';
 
 import React from 'react';
-import { Pen, Zap, Users, Sparkles, ArrowRight, Menu, X } from 'lucide-react';
+import { Pen, Zap, Users, Sparkles, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 
 export default function ExcelidrawLanding() {
-  const [isMenuOpen, setIsMenuOpen] = React.useState(false);
   const [scrollY, setScrollY] = React.useState(0);
 
   React.useEffect(() => {

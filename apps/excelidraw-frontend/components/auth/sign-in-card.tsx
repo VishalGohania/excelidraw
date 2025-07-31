@@ -29,6 +29,7 @@ export default function SigninCard({ setFormType: setState }: SigninCardProps) {
         const res = await signIn(provider, {
           email,
           password,
+          action: "signin",
           redirect: false,
           callbackUrl: "/room",
         });

@@ -1,6 +1,6 @@
 import { HTTP_BACKEND } from "@/config";
 import NextAuth, { NextAuthOptions } from "next-auth";
-import Credentials from "next-auth/providers/credentials";
+import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
 
 declare module "next-auth" {
@@ -15,67 +15,54 @@ declare module "next-auth" {
 }
 
 export const authOptions: NextAuthOptions = {
-  debug: process.env.NODE_ENV === "development",
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID ?? "",
       clientSecret: process.env.GOOGLE_CLIENT_SECRET ?? "",
     }),
-    Credentials({
+    CredentialsProvider({
       name: "Credentials",
       credentials: {
         email: { label: "Email", type: "email" },
         password: { label: "Password", type: "password" },
+        action: { label: "Action", type: "text" }, // "signin" or "signup"
+        name: { label: "Name", type: "text" }, // Only for signup
       },
       async authorize(credentials) {
-        if (!credentials?.email || !credentials?.password) {
-          return null;
-        }
-
+        if (!credentials?.email || !credentials?.password) return null;
+        const isSignup = credentials.action === "signup";
+        const endpoint = isSignup ? "/auth/signup" : "/auth/login";
         try {
-          const res = await fetch(`${HTTP_BACKEND}/auth/login`, {
+          const res = await fetch(`${HTTP_BACKEND}${endpoint}`, {
             method: "POST",
-            headers: {"Content-Type": "application/json"},
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
               email: credentials.email,
               password: credentials.password,
-            })
+              name: credentials.name, // Only for signup
+            }),
           });
-
-          if (!res.ok) {
-            return null;
-          }
-
+          if (!res.ok) return null;
           const user = await res.json();
           return user;
-          
         } catch (error) {
           console.error("Auth error:", error);
           return null;
         }
-      }
-    })
+      },
+    }),
   ],
-  session: {
-    strategy: "jwt",
-  },
-  secret: process.env.NEXTAUTH_SECRET,
+  secret: process.env.NEXTAUTH_SECRET ?? "secret",
+  session: { strategy: "jwt" },
   pages: {
     signIn: "/auth",
-    signOut: "/auth",
-    error: "/auth"
-  },                
+    error: "/auth",
+  },
   callbacks: {
     async jwt({ token, user, account }) {
-      if (user) {
-        token.id = user.id;
-      }
-      
-      // Handle Google OAuth user creation
+      if (user) token.id = user.id;
       if (account?.provider === "google" && user) {
         try {
-          console.log("Google OAuth: Creating/verifying user in database");
-          // Check if user exists in your database
           const res = await fetch(`${HTTP_BACKEND}/auth/google-user`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -85,30 +72,22 @@ export const authOptions: NextAuthOptions = {
               image: user.image,
             }),
           });
-          
           if (res.ok) {
             const dbUser = await res.json();
             token.id = dbUser.id;
-            console.log("Google OAuth: User processed successfully", dbUser.id);
-          } else {
-            console.error("Google OAuth: Failed to process user", await res.text());
           }
         } catch (error) {
           console.error("Google user creation error:", error);
         }
       }
-      
       return token;
     },
     async session({ session, token }) {
-      if (token && session.user) {
-        session.user.id = token.id as string;
-      }
+      if (token && session.user) session.user.id = token.id as string;
       return session;
-    }
-  }
+    },
+  },
 };
 
 const handler = NextAuth(authOptions);
-
 export { handler as GET, handler as POST };

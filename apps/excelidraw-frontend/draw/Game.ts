@@ -161,8 +161,10 @@ export class Game {
       this.clearCanvas();
       this.ctx.strokeStyle = "rgba(255, 255, 255)";
       const selectedTool = this.selectedTool;
+
       if(selectedTool === "rect") {
         this.ctx.strokeRect(this.startX, this.startY, width, height);
+
       } else if (selectedTool === "circle") {
         const radius = Math.max(width, height) / 2;
         const centerX = this.startX + radius;
@@ -171,6 +173,7 @@ export class Game {
         this.ctx.arc(centerX, centerY, Math.abs(radius), 0, Math.PI * 2);
         this.ctx.stroke();
         this.ctx.closePath();
+        
       } else if (selectedTool === "pencil") {
         this.pencilPoints.push({x: e.clientX, y: e.clientY});
         this.ctx.beginPath();

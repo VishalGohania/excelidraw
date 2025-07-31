@@ -21,7 +21,7 @@ export default function RoomPage() {
 
             // Generate a random room ID
             const roomId = Math.random().toString(36).substring(2, 8);
-            
+
             // Redirect to the canvas page with the new room ID
             router.push(`/canvas/${roomId}`);
         } catch (error) {
@@ -33,14 +33,14 @@ export default function RoomPage() {
 
     return (
         <ProtectedRoute>
-            <div className="min-h-screen bg-[#111723] text-white p-8">
-                <div className="max-w-4xl mx-auto">
-                    <h1 className="text-3xl font-semibold mb-6">Welcome to Your Workspace</h1>
-                    
-                    <div className="bg-[#0E131E] rounded-lg p-6 border border-gray-800">
-                        <h2 className="text-xl font-medium mb-4">Create a New Room</h2>
+            <div className="min-h-screen h-screen bg-[#111723] text-white p-8 flex justify-center items-center">
+                <div className="max-w-4xl mx-auto mt-12">
+                    <h1 className="text-3xl font-semibold mb-6 mt-4">Welcome to Your Workspace</h1>
+
+                    <div className="bg-[#0E131E] rounded-lg p-6 m-6 mt-12 border border-gray-800">
+                        <h2 className="text-2xl font-medium mb-4 m-4">Create a New Room</h2>
                         <p className="text-gray-400 mb-6">Start a new collaborative session by creating a room.</p>
-                        
+
                         <Button
                             onClick={createRoom}
                             disabled={isCreating}
