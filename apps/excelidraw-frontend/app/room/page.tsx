@@ -5,29 +5,44 @@ import { useState } from "react";
 import { useSession } from "next-auth/react";
 import { Button } from "@/components/ui/button";
 import { toast } from "react-toastify";
-
+import { http } from "@/draw"
 export default function RoomPage() {
     const router = useRouter();
-    const { status } = useSession();
-    const [isCreating, setIsCreating] = useState(false);
+    const { data: session } = useSession();
+    const [isLoading, setIsLoading] = useState(false);
 
-    const createRoom = async () => {
+    const handleCreateRoom = async () => {
+        if (isLoading) return;
+        setIsLoading(true);
         try {
-            setIsCreating(true);
-            if (status === "unauthenticated") {
+            if (!session?.accessToken) {
+                console.error("No access token found. Redirecting to auth page.");
                 router.push("/auth");
                 return;
             }
 
-            // Generate a random room ID
-            const roomId = Math.random().toString(36).substring(2, 8);
+            // send a request to the backend to create a new Room
+            const { data } = await http.post(
+                "/room",
+                {},
+                {
+                    headers: {
+                        Authorization: `Bearer ${session.accessToken}`;
+                    }
+                }
+            );
 
-            // Redirect to the canvas page with the new room ID
-            router.push(`/canvas/${roomId}`);
+
+            // Redirect to the canvas page using the unique room name from the response
+            if (data?.room?.name) {
+                router.push(`/canvas/${data.room.name}`);
+            } else {
+                console.error("Failed to get room name from server response.");
+            }
         } catch (error) {
             toast.error("Failed to create room. Please try again.");
         } finally {
-            setIsCreating(false);
+            setIsLoading(false);
         }
     };
 
@@ -42,11 +57,11 @@ export default function RoomPage() {
                         <p className="text-gray-400 mb-6">Start a new collaborative session by creating a room.</p>
 
                         <Button
-                            onClick={createRoom}
-                            disabled={isCreating}
+                            onClick={handleCreateRoom}
+                            disabled={isLoading}
                             className="bg-[#0077FF] hover:bg-[#0066DD] text-white px-6 py-3 rounded-lg font-medium flex items-center transition-colors"
                         >
-                            {isCreating ? 'Creating...' : 'Create New Room'}
+                            {isLoading ? 'Creating Room...' : 'Create a New Room'}
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="ml-2 size-5">
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                             </svg>

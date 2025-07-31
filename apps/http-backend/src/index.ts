@@ -1,7 +1,7 @@
 import express from "express";
 import { JWT_SECRET } from "@repo/backend-common/config";
 import {CreateRoomSchema, CreateUserSchema, SigninSchema} from "@repo/common/types";
-import { middleware } from "./middleware";
+import { errorHandler, notFound, protect } from "./middleware";
 import jwt from "jsonwebtoken";
 import prisma from "@repo/db";
 import cors from "cors";
@@ -10,10 +10,15 @@ import { authRoutes } from "./routes/auth";
 
 const app = express();
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 
 // Auth routes for NextAuth
 app.use("/auth", authRoutes);
+app.use("/room", protect, roomRoutes);
+
+app.use(notFound);
+app.use(errorHandler);
 
 // Legacy endpoints (keeping for backward compatibility)
 app.post("/signup", async (req, res) => {
@@ -76,7 +81,7 @@ app.post("/signin", async (req, res) => {
   })
 })
 
-app.post("/room", middleware, async (req, res) => {
+app.post("/room", protect, async (req, res) => {
   const parsedData = CreateRoomSchema.safeParse(req.body);
   if(!parsedData.success) {
     res.json({
@@ -160,36 +165,11 @@ app.get("/room/:slug", async (req, res) => {
   })
 })
 
-// // Function to try different ports
-// function startServer(ports: number[]) {
-//   let currentPortIndex = 0;
 
-//   function tryNextPort() {
-//     if(currentPortIndex >= ports.length) {
-//       console.error('all ports are in use');
-//       return;
-//     }
+const PORT = process.env.PORT |
 
-//     const port = ports[currentPortIndex];
-//     const server = app.listen(port)
-//     .on('error', (err: any) => {
-//       if(err.code === 'EADDRINUSE') {
-//         console.log(`Port ${port} is in use, trying next port...`);
-//         currentPortIndex++;
-//         tryNextPort();
-//       } else {
-//         console.error('Server error:', err);
-//       }
-//     })
-//     .on('listening', () => {
-//       console.log(`Server running on port ${port}`);
-//       // Export the current port for frontend use
-//       process.env.HTTP_PORT = port?.toString();
-//     })
-//   }
-//   tryNextPort();
-// }
+| 3001;
 
-// startServer([3001, 3002]);
-
-app.listen(3001);
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
+});
