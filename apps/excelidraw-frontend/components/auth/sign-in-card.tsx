@@ -50,7 +50,7 @@ export default function SigninCard({ setFormType: setState }: SigninCardProps) {
         }
 
         if (!res?.error) {
-          router.push("/room"); // Ensure consistent redirection to /room
+          router.push("/room");
         }
       }
     } catch (error) {

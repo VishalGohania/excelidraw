@@ -2,12 +2,7 @@
 
 import { useState } from "react";
 import { FcGoogle } from "react-icons/fc";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
@@ -16,6 +11,8 @@ import { TriangleAlert } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
 import { SignInFlow } from "@/types/auth-types";
+import { http } from "@/draw/http";
+import { toast } from "react-toastify";
 
 interface SignupCardProps {
   setFormType: (state: SignInFlow) => void;
@@ -28,62 +25,40 @@ export default function SignupCard({ setFormType: setState }: SignupCardProps) {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
   const [pending, setPending] = useState(false);
-  const router = useRouter();
 
-  const signInWithProvider = async (provider: "google" | "credentials") => {
-    try {
-      if (provider === "credentials") {
-        const res = await signIn(provider, {
-          email,
-          name,
-          password,
-          action: "signup",
-          redirect: false,
-          callbackUrl: "/room",
-        });
-        if (res?.error) {
-          setError(res.error);
-        }
-        if (!res?.error) {
-          router.push("/room");
-        }
-      }
-      if (provider === "google") {
-        const res = await signIn(provider, {
-          redirect: false,
-          callbackUrl: "/room",
-        });
-        if (res?.error) {
-          setError(res.error);
-        }
-        if (!res?.error) {
-          router.push("/room");
-        }
-      }
-    } catch (error) {
-      console.error("Sign-up error:", error);
-      setError("An unexpected error occurred.");
-    } finally {
-      setPending(false);
-    }
-  };
-
-  const handlerCredentialSignup = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleApiSignup = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError("");
     setPending(true);
+
     if (password !== confirmPassword) {
       setError("Passwords do not match");
       setPending(false);
       return;
     }
-    signInWithProvider("credentials");
-  };
+    try {
+      await http.post("/auth/signup", {
+        name,
+        username: email,
+        password
+      });
+
+      toast.success("Account created successfully! Please sign in.");
+      setState("signIn");
+
+    } catch (err: any) {
+      const errorMessage = err.response?.data?.message || "An unexpected errro occured";
+      setError(errorMessage);
+      toast.error(errorMessage);
+    } finally {
+      setPending(false);
+    }
+  }
 
   const handleGoogleSignup = (provider: "google") => {
     setError("");
     setPending(true);
-    signInWithProvider(provider);
+    signIn(provider, { callbackUrl: "/room" })
   };
 
   return (
@@ -108,7 +83,7 @@ export default function SignupCard({ setFormType: setState }: SignupCardProps) {
           </div>
         )}
         <CardContent className="space-y-6 px-0 pb-0">
-          <form className="space-y-4" onSubmit={handlerCredentialSignup}>
+          <form className="space-y-4" onSubmit={handleApiSignup}>
             <Input
               disabled={pending}
               value={name}
@@ -151,7 +126,7 @@ export default function SignupCard({ setFormType: setState }: SignupCardProps) {
               size={"lg"}
               disabled={pending}
             >
-              Continue
+              Create Account
             </Button>
           </form>
           <Separator className="bg-gradient-to-r from-gray-800 via-neutral-500 to-gray-800" />

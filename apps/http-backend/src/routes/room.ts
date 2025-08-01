@@ -1,8 +1,10 @@
 import { Router } from "express";
 import { createRoom } from "../controllers/roomController";
+import { getRoomBySlug } from "../controllers/dataController";
 
 const router: Router = Router();
 
-router.post("/", createRoom)
+router.post("/", createRoom);
+router.get("/:slug", getRoomBySlug);
 
-export default router;
+export  {router as roomRoutes };

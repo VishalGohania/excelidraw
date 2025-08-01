@@ -1,5 +1,5 @@
-import { NextFunction, Request, Response } from "express";
-import jwt, { decode, JwtPayload } from "jsonwebtoken";
+import { NextFunction, Request, RequestHandler, Response } from "express";
+import jwt, { JwtPayload } from "jsonwebtoken";
 import  prisma  from "@repo/db"
 
 import {JWT_SECRET} from '@repo/backend-common/config';
@@ -33,7 +33,7 @@ export const errorHandler = (
 };
 
 
-export const protect = async (
+export const protect: RequestHandler = async (
   req: AuthRequest,
   res: Response,
   next: NextFunction
@@ -57,18 +57,23 @@ export const protect = async (
       })
 
       if(!user) {
-        return forbidden(res, "Invalid token: User not found");
+        forbidden(res, "Invalid token: User not found");
+        return;
       }
+
       req.user = {id: user.id};
       next();
+
     } catch (error) {
       console.error("Token verification failed", error);
-      return forbidden(res, "Not authorized, token failed.")
+      forbidden(res, "Not authorized, token failed.");
+      return;
     }
   }
 
   if(!token) {
-    return unauthorized(res, "Not authorized, no token provided.")
+    unauthorized(res, "Not authorized, no token provided.");
+    return;
   }
 }
 

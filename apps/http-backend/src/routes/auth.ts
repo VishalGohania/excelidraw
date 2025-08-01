@@ -1,11 +1,11 @@
 import { Router } from "express";
-import { authController } from "../controllers/authController";
+import { googleUserController, signinController, signupController } from "../controllers/authController";
 
 const router: Router = Router();
 
 // NextAuth endpoints
-router.post("/login", authController.login);
-router.post("/signup", authController.signup);
-router.post("/google-user", authController.googleUser);
+router.post("/login", signinController);
+router.post("/signup", signupController);
+router.post("/google-user", googleUserController);
 
 export { router as authRoutes }; 

@@ -1,20 +1,23 @@
-import { Request, Response } from "express";
+import { Request, RequestHandler, Response } from "express";
 import { AuthRequest } from "../middleware";
 import { json, serverError, unauthorized } from "../utils/response";
 import slugify from "slugify";
+import prisma from "@repo/db";
 
-export const createRoom = async (req: AuthRequest, res: Response) => {
+export const createRoom: RequestHandler = async (req: AuthRequest, res: Response) => {
   try {
     const { roomName } = req.body;
 
     const user = req.user;
 
     if(!user || !user.id) {
-      return serverError(res, "Authentication error: User not found on request");
+      serverError(res, "Authentication error: User not found on request");
+      return;
     }
 
-    if(!roomName || typeof roomName !== 'string') {
-      return serverError(res, "Room name is required and must be a string");
+    if(!roomName || typeof roomName !== 'string' || roomName.trim() === '') {
+      serverError(res, "Room name is required and cannot be empty");
+      return;
     }
 
     const uniqueSlug = slugify(`${roomName}-${Date.now()}`, {
@@ -23,10 +26,10 @@ export const createRoom = async (req: AuthRequest, res: Response) => {
     });
 
     // create new room in database 
-    const newRoom = await prisma?.room.create({
+    const newRoom = await prisma.room.create({
       data: {
         slug: uniqueSlug,
-        adminId: (user.id).toString(),
+        adminId: user.id,
       },
       select: {
         id: true,
@@ -36,13 +39,10 @@ export const createRoom = async (req: AuthRequest, res: Response) => {
       }
     });
 
-    if(!newRoom) {
-      return serverError(res, "Failed to create the room");
-    }
+    json(res, { room: newRoom });
 
-    return json(res, { room: { newRoom }});
   } catch (error) {
     console.error("Failed to create a room: ", error);
-    return serverError(res, "An unecpected error occured while creating the room");
+    serverError(res, "An unecpected error occured while creating the room");
   }
 }
