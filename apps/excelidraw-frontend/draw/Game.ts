@@ -1,5 +1,6 @@
 import { Tool } from "@/components/Canvas";
-import { getExistingShapes } from "./http";
+import { getExistingShapes, http } from "./http";
+import { initDraw } from ".";
 
 type Shape = {
   type: "rect";
@@ -28,7 +29,8 @@ export class Game {
   private startY = 0;
   private selectedTool: Tool = "circle";
   private pencilPoints: {x: number; y: number}[] = [];
-  socket: WebSocket;
+  private socket: WebSocket;
+
 
   constructor(canvas: HTMLCanvasElement, roomId: string, socket: WebSocket) {
     this.canvas = canvas;
@@ -40,12 +42,19 @@ export class Game {
     this.init();
     this.initHandlers();
     this.initMouseHandlers();
+
+
   }
 
   destroy() {
     this.canvas.removeEventListener("mousedown", this.mouseDownHandler)
     this.canvas.removeEventListener("mouseup", this.mouseUpHandler)
     this.canvas.removeEventListener("mousemove", this.mouseMoveHandler)
+
+    if(this.socket) {
+      this.socket.close();
+    }
+    console.log("Game instance destroyed");
   }
 
   setTool(tool: "circle" | "pencil" | "rect") {
@@ -53,8 +62,45 @@ export class Game {
   }
 
   async init() {
-    this.existingShapes = await getExistingShapes(this.roomId);
-    this.clearCanvas();
+    try {
+      const numericRoomId = await this.getNumericRoomId(this.roomId);
+
+      if(!numericRoomId) {
+        console.error("Could not fetch a valid room ID for this slug.");
+        return;
+      }
+
+      const wsUrl = process.env.NEXT_PUBLIC_WS_URL || 'ws://localhost:8080';
+      this.socket = new WebSocket(`${wsUrl}?roomId=${numericRoomId}`);
+
+      this.socket.onopen = () => {
+        console.log("WebSocket connection established with roomId:", numericRoomId);
+      };
+
+      this.socket.onerror = (error) => {
+        console.error("WebSocket error:", error);
+      };
+
+      await initDraw(this.canvas, String(numericRoomId), this.socket);
+
+      this.canvas.addEventListener("mousedown", this.mouseDownHandler);
+      this.canvas.addEventListener("mouseup", this.mouseUpHandler);
+      this.canvas.addEventListener("mousemove", this.mouseMoveHandler);
+
+    } catch (error) {
+      console.error("Failed to initialize the game:", error);
+    }
+    // this.clearCanvas();
+  }
+
+  private async getNumericRoomId(slug: string): Promise<number | null> {
+    try {
+      const res = await http.get(`/room/${slug}`);
+      return res.data?.room?.id || null;
+    } catch (error) {
+      console.error(`Failed to fetch room details for slug: ${slug}`, error);
+      return null;
+    }
   }
 
   initHandlers() {

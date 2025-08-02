@@ -1,4 +1,5 @@
 import { getExistingShapes } from "./http";
+import { http } from "./http"
 
 
 type Shape = {
@@ -20,14 +21,14 @@ type Shape = {
   endY: number;
 }
 
-export async function initDraw(canvas: HTMLCanvasElement, roomId: string, socket: WebSocket) {
+export async function initDraw(canvas: HTMLCanvasElement, roomId: string, socket: WebSocket): Promise<void> {
   const ctx = canvas.getContext("2d");
 
-  const existingShape: Shape[] =  await getExistingShapes(roomId);
-  
   if(!ctx) {
-    return
+    console.error("Failed to get 2D context from canvas");
+    return; 
   } 
+  const existingShape: Shape[] =  await getExistingShapes(roomId);
 
   socket.onmessage = (event) => {
     const message = JSON.parse(event.data);

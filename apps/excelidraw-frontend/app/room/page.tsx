@@ -24,14 +24,16 @@ export default function RoomPage() {
             return
         }
         if (isLoading) return;
-        setIsLoading(true);
-        setError(null);
+
         try {
             if (!session?.accessToken) {
                 toast.error("Authentication session not found. Please log in.");
                 router.push("/auth");
                 return;
             }
+
+            setIsLoading(true);
+            setError(null);
 
             // send a request to the backend to create a new Room
             const { data } = await http.post(
@@ -46,9 +48,9 @@ export default function RoomPage() {
 
 
             // Redirect to the canvas page using the unique room name from the response
-            if (data?.room?.slug) {
+            if (data?.data?.room?.slug) {
                 toast.success(`Room "${roomName}" created!`)
-                router.push(`/canvas/${data.room.slug}`);
+                router.push(`/canvas/${data.data.room.slug}`);
             } else {
                 const errorMessage = data?.message || "Failed to get room details from server."
                 setError(errorMessage);
@@ -98,8 +100,6 @@ export default function RoomPage() {
                                 )}
                             </Button>
                         </form>
-
-
                     </div>
                 </div>
             </div>

@@ -39,8 +39,8 @@ export const authOptions: NextAuthOptions = {
 
             const responseData = await res.json();
             return responseData.data;
-          } catch (error) {
-            console.error("Auth error:", error);
+          } catch (error: any) {
+            throw new Error(error.message);
           }
         }
         return null;
@@ -58,7 +58,7 @@ export const authOptions: NextAuthOptions = {
       if (user) {
         const backendUser = user as any;
         token.accessToken = backendUser.token;
-        token.id = backendUser.user?.id || backendUser.id;
+        token.id = backendUser.user?.id;
       }
       if (account?.provider === "google" && user) {
         try {
@@ -72,8 +72,9 @@ export const authOptions: NextAuthOptions = {
             }),
           });
           if (res.ok) {
-            const dbUser = await res.json();
-            token.id = dbUser.id;
+            const dbUserResponse = await res.json();
+            const dbUser = dbUserResponse.data;
+            token.id = dbUser.user.id;
             token.accessToken = dbUser.token;
           }
         } catch (error) {
