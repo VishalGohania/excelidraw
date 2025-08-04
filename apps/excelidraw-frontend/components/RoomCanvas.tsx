@@ -5,20 +5,27 @@ import { useEffect, useState } from "react";
 import { Canvas } from "./Canvas";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
+import { toast } from "react-toastify";
 
 export function RoomCanvas({ roomId }: { roomId: string }) {
   console.log("RoomCanvas received roomId:", roomId, "Type:", typeof roomId);
+
   const [socket, setSocket] = useState<WebSocket | null>(null);
   const router = useRouter();
   const { data: session, status } = useSession();
 
   useEffect(() => {
+    if (status === 'loading') {
+      return;
+    }
+
     if (status === "unauthenticated") {
+      toast.error("Yout must be logged in to view this page");
       router.push("/auth");
       return;
     }
 
-    if (status !== "authenticated" || !session) {
+    if (status !== "authenticated" || !session?.user?.id) {
       return;
     }
 
@@ -38,16 +45,27 @@ export function RoomCanvas({ roomId }: { roomId: string }) {
 
     ws.onclose = (event) => {
       if (event.code === 1008) {
-        // Authentication error
         router.push("/auth")
+      }
+    }
+
+    // cleanup function 
+    return () => {
+      if (ws && ws.readyState === WebSocket.OPEN) {
+        ws.close(1000, "Component unmounting");
       }
     }
   }, [roomId, router, session, status])
 
   if (!socket) {
-    return <div>
-      Connecting to server....
-    </div>
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 text-white flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-white mx-auto mb-4"></div>
+          <p className="text-gray-300 text-lg">Connecting to server...</p>
+        </div>
+      </div>
+    )
   }
 
   return <div>

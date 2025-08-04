@@ -14,7 +14,8 @@ app.use(cors());
 // Auth routes for NextAuth
 app.use("/auth", authRoutes);
 app.use("/chats", chatRoutes);
-app.use("/room", protect , roomRoutes);
+app.use("/room", roomRoutes);
+app.use("/rooms", roomRoutes);
 
 
 app.use(notFound);

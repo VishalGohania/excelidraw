@@ -46,3 +46,36 @@ export const createRoom: RequestHandler = async (req: AuthRequest, res: Response
     serverError(res, "An unecpected error occured while creating the room");
   }
 }
+
+export const getUserRooms: RequestHandler = async (req: AuthRequest, res: Response) => {
+  try {
+    const user = req.user;
+
+    if(!user || !user.id) {
+      serverError(res, "Authentication error: User not found on request");
+      return;
+    }
+
+    // Get rooms where user is admin (created by user)
+    const rooms = await prisma.room.findMany({
+      where : {
+        adminId: user.id
+      },
+      select: {
+        id: true,
+        slug: true,
+        createdAt: true,
+        adminId: true
+      },
+      orderBy: {
+        createdAt: 'desc'
+      },
+      take: 50
+    });
+
+    json(res, { rooms });
+  } catch (error) {
+    console.error("Failed to fetch user rooms", error);
+    serverError(res, "An unexpected error occurred while fetching rooms");
+  }
+}

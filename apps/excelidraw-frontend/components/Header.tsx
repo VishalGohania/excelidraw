@@ -31,7 +31,7 @@ export default function Header() {
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <Link href="/" className="flex-shrink-0 flex items-center cursor-pointer">
-            <div className="w-8 h-8 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg flex items-center justify-center mr-3">
+            <div className="w-8 h-8 bg-gradient-to-r from-gray-700 to-gray-900 rounded-lg flex items-center justify-center mr-3">
               <Pen className="w-5 h-5 text-white" />
             </div>
             <span className="text-xl sm:text-2xl font-bold text-white">Excelidraw</span>
@@ -66,7 +66,7 @@ export default function Header() {
                     </Button>
                   </Link>
                   <Link href={{ pathname: '/auth', query: { authType: 'signUp' } }}>
-                    <Button className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-4 lg:px-6 py-2 rounded-full hover:from-purple-600 hover:to-pink-600 transition-all duration-200 transform hover:scale-105 text-sm lg:text-base whitespace-nowrap">
+                    <Button className="bg-gradient-to-r from-gray-600 to-gray-800 text-white px-4 lg:px-6 py-2 rounded-full hover:from-gray-700 hover:to-gray-900 transition-all duration-200 transform hover:scale-105 text-sm lg:text-base whitespace-nowrap">
                       Sign Up
                     </Button>
                   </Link>
@@ -76,7 +76,7 @@ export default function Header() {
               {status === 'authenticated' && (
                 <>
                   <span className="text-sm text-gray-300 hidden lg:block whitespace-nowrap">Welcome, {session.user?.name || session.user?.email}</span>
-                  <Button onClick={handleLogout} variant="destructive" className="px-4 lg:px-6 py-2 rounded-full text-sm lg:text-base whitespace-nowrap">
+                  <Button onClick={handleLogout} className="bg-gradient-to-r from-gray-600 to-gray-800 text-white px-4 lg:px-6 py-2 rounded-full hover:from-gray-700 hover:to-gray-900 transition-all duration-200 transform hover:scale-105 text-sm lg:text-base whitespace-nowrap">
                     Logout
                   </Button>
                 </>

@@ -4,7 +4,7 @@ import "./globals.css";
 import { Providers } from "./providers";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth-options";
-import Header from "@/components/Header";
+import ConditionalHeader from "@/components/ConditionHeader";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -25,7 +25,7 @@ export default async function RootLayout({
         className={`${inter.className} antialiased`}
       >
         <Providers session={session}>
-          <Header />
+          <ConditionalHeader />
           {children}
         </Providers>
       </body>
