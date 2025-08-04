@@ -1,6 +1,5 @@
-import { Shape, Tool } from "@/types/canvas";
+import { Shape } from "@/types/canvas";
 import { getExistingShapes } from "./http";
-import { http } from "./http"
 
 
 export async function initDraw(canvas: HTMLCanvasElement, roomId: string, socket: WebSocket): Promise<void> {

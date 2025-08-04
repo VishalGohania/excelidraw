@@ -109,7 +109,7 @@ export default function RoomPage() {
 
     return (
         <ProtectedRoute>
-            <div className="min-h-screen h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 text-white p-8 flex justify-center items-start">
+            <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 text-white p-8 flex justify-center items-start">
                 <div className="max-w-6xl mx-auto mt-12 w-full">
                     <h1 className="text-3xl font-semibold mb-6 mt-4">Welcome to Your Workspace</h1>
 
@@ -153,7 +153,7 @@ export default function RoomPage() {
                                 onClick={fetchExistingRooms}
                                 disabled={isLoadingRooms}
                                 variant="outline"
-                                className="text-white border-gray-600 hover:bg-gray-700"
+                                className="bg-gradient-to-r from-gray-600 to-gray-800 text-white hover:from-gray-700 hover:to-gray-900 transition-all duration-200 transform hover:scale-105"
                             >
                                 {isLoadingRooms ? 'Loading...' : 'Refresh'}
                             </Button>

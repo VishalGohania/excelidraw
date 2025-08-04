@@ -1,5 +1,4 @@
 import { getExistingShapes, http } from "./http";
-import { initDraw } from ".";
 import { Shape, Tool } from "@/types/canvas";
 
 

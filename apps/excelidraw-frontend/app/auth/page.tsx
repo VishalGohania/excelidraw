@@ -16,17 +16,17 @@ export default function AuthPage() {
   const router = useRouter();
 
   useEffect(() => {
-    if(session.status === "authenticated") {
+    if (session.status === "authenticated") {
       router.push("/room")
     }
-  },[session.status, router])
-  
-  if(session.status === "authenticated") {
+  }, [session.status, router])
+
+  if (session.status === "authenticated") {
     return null;
   }
   return (
-  <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-b from-purple-900 to-gray-900">
-    <AuthScreen authType={formType} />
-  </div>
+    <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-br from-gray-900 via-black to-gray-900">
+      <AuthScreen authType={formType} />
+    </div>
   )
 }

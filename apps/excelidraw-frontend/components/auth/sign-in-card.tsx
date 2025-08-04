@@ -79,12 +79,12 @@ export default function SigninCard({ setFormType: setState }: SigninCardProps) {
     <>
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         <div className="absolute -inset-10 opacity-30 sm:opacity-50">
-          <div className="absolute top-10 sm:top-20 left-10 sm:left-20 w-48 sm:w-72 h-48 sm:h-72 bg-purple-500 rounded-full mix-blend-multiply filter blur-xl animate-pulse"></div>
-          <div className="absolute top-20 sm:top-40 right-10 sm:right-20 w-48 sm:w-72 h-48 sm:h-72 bg-pink-500 rounded-full mix-blend-multiply filter blur-xl animate-pulse animation-delay-2000"></div>
-          <div className="absolute -bottom-4 sm:-bottom-8 left-20 sm:left-40 w-48 sm:w-72 h-48 sm:h-72 bg-blue-500 rounded-full mix-blend-multiply filter blur-xl animate-pulse animation-delay-4000"></div>
+          <div className="absolute top-10 sm:top-20 left-10 sm:left-20 w-48 sm:w-72 h-48 sm:h-72 bg-gray-700 rounded-full mix-blend-multiply filter blur-xl animate-pulse"></div>
+          <div className="absolute top-20 sm:top-40 right-10 sm:right-20 w-48 sm:w-72 h-48 sm:h-72 bg-gray-800 rounded-full mix-blend-multiply filter blur-xl animate-pulse animation-delay-2000"></div>
+          <div className="absolute -bottom-4 sm:-bottom-8 left-20 sm:left-40 w-48 sm:w-72 h-48 sm:h-72 bg-gray-600 rounded-full mix-blend-multiply filter blur-xl animate-pulse animation-delay-4000"></div>
         </div>
       </div>
-      <Card className="w-full border-purple-600 bg-gray-800 bg-opacity-50 p-8">
+      <Card className="w-full border-gray-600 bg-gray-800 bg-opacity-50 p-8">
         <CardHeader className="w-full">
           <CardTitle className="text-center text-3xl font-bold text-white">
             Login to ExcelIdraw
@@ -103,7 +103,7 @@ export default function SigninCard({ setFormType: setState }: SigninCardProps) {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="Email"
-              className="border-gray-400 bg-transparent text-white placeholder:text-gray-400 focus-visible:ring-purple-600 focus-visible:ring-offset-0"
+              className="border-gray-400 bg-transparent text-white placeholder:text-gray-400 focus-visible:ring-gray-600 focus-visible:ring-offset-0"
               type="email"
               required
             />
@@ -112,14 +112,14 @@ export default function SigninCard({ setFormType: setState }: SigninCardProps) {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Password"
-              className="border-gray-400 bg-transparent text-white placeholder:text-gray-400 focus-visible:ring-purple-600 focus-visible:ring-offset-0"
+              className="border-gray-400 bg-transparent text-white placeholder:text-gray-400 focus-visible:ring-gray-600 focus-visible:ring-offset-0"
               type="password"
               required
             />
             <Button
               disabled={pending}
               type="submit"
-              className="w-full bg-purple-600 hover:bg-purple-700"
+              className="w-full bg-gradient-to-r from-gray-600 to-gray-800 text-white hover:from-gray-700 hover:to-gray-900 transition-all duration-300 transform hover:scale-105"
               size={"lg"}
             >
               Continue
@@ -134,7 +134,7 @@ export default function SigninCard({ setFormType: setState }: SigninCardProps) {
               }}
               size="lg"
               variant="outline"
-              className="relative w-full bg-white text-black hover:bg-white/90"
+              className="relative w-full bg-white text-black hover:bg-white/90 transition-all duration-300 transform hover:scale-105"
             >
               <FcGoogle className="absolute left-2.5 top-3 size-5" />
               Continue with google

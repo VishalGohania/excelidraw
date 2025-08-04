@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Pen, Zap, Users, Sparkles, ArrowRight } from 'lucide-react';
+import { Pen, Zap, Users, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 
@@ -30,11 +30,6 @@ export default function ExcelidrawLanding() {
       title: "Collaborate Live",
       description: "Work together in real-time with your team on shared canvases and projects."
     },
-    {
-      icon: <Sparkles className="w-6 h-6 sm:w-8 sm:h-8" />,
-      title: "AI-Powered",
-      description: "Smart suggestions and auto-complete features to enhance your creative workflow."
-    }
   ];
 
   return (
@@ -62,13 +57,13 @@ export default function ExcelidrawLanding() {
             Create, collaborate, and innovate with powerful features designed for modern teams.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center px-4">
-            <a href="/signup" className="group w-full sm:w-auto bg-gradient-to-r from-gray-600 to-gray-800 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-full text-base sm:text-lg font-semibold hover:from-gray-700 hover:to-gray-900 transition-all duration-300 transform hover:scale-105 flex items-center justify-center">
-              Start Drawing Free
-              <ArrowRight className="ml-2 w-4 h-4 sm:w-5 sm:h-5 group-hover:translate-x-1 transition-transform" />
-            </a>
-            <Button className="w-full sm:w-auto text-white border border-white/30 px-6 sm:px-8 py-3 sm:py-4 rounded-full text-base sm:text-lg font-semibold hover:bg-white/10 transition-all duration-300">
-              Watch Demo
-            </Button>
+            <Link href={{ pathname: "/auth", query: { authType: 'signUp' } }}>
+              <Button className="group w-full sm:w-auto bg-gradient-to-r from-gray-600 to-gray-800 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-full text-base sm:text-lg font-semibold hover:from-gray-700 hover:to-gray-900 transition-all duration-300 transform hover:scale-105 flex items-center justify-center">
+                Start Drawing Free
+                <ArrowRight className="ml-2 w-4 h-4 sm:w-5 sm:h-5 group-hover:translate-x-1 transition-transform" />
+              </Button>
+            </Link>
+
           </div>
         </div>
       </div>
@@ -78,43 +73,43 @@ export default function ExcelidrawLanding() {
         <div className="bg-gradient-to-r from-gray-800/20 to-black/30 backdrop-blur-sm border border-white/10 rounded-2xl sm:rounded-3xl p-4 sm:p-8 transform hover:scale-[1.01] sm:hover:scale-[1.02] transition-transform duration-700">
           <div className="bg-gradient-to-br from-gray-900 to-black rounded-xl sm:rounded-2xl aspect-video flex items-center justify-center relative overflow-hidden">
             <div className="absolute inset-0 bg-gradient-to-br from-gray-900/50 to-black/50"></div>
-            
+
             {/* Grid pattern background */}
             <svg className="absolute inset-0 w-full h-full" xmlns="http://www.w3.org/2000/svg">
               <defs>
                 <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
-                  <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#374151" strokeWidth="0.5" opacity="0.2"/>
+                  <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#374151" strokeWidth="0.5" opacity="0.2" />
                 </pattern>
               </defs>
               <rect width="100%" height="100%" fill="url(#grid)" />
             </svg>
-            
+
             {/* Drawing elements */}
             <svg viewBox="0 0 800 400" className="w-full h-full relative z-10 p-8">
               {/* Connecting lines */}
               <path d="M 200 200 L 400 150" stroke="#6b7280" strokeWidth="2" strokeDasharray="5,5" opacity="0.5" />
               <path d="M 400 150 L 600 200" stroke="#6b7280" strokeWidth="2" strokeDasharray="5,5" opacity="0.5" />
               <path d="M 400 150 L 400 300" stroke="#6b7280" strokeWidth="2" strokeDasharray="5,5" opacity="0.5" />
-              
+
               {/* Shapes with dark theme colors */}
               <circle cx="200" cy="200" r="40" fill="#374151" stroke="#6b7280" strokeWidth="2" className="animate-pulse" />
               <text x="200" y="205" textAnchor="middle" fill="#d1d5db" fontSize="14" fontFamily="monospace">Start</text>
-              
+
               <rect x="350" y="120" width="100" height="60" rx="8" fill="#1f2937" stroke="#6b7280" strokeWidth="2" className="animate-pulse animation-delay-1000" />
               <text x="400" y="155" textAnchor="middle" fill="#d1d5db" fontSize="14" fontFamily="monospace">Process</text>
-              
+
               <polygon points="600,170 640,200 600,230 560,200" fill="#111827" stroke="#6b7280" strokeWidth="2" className="animate-pulse animation-delay-2000" />
               <text x="600" y="205" textAnchor="middle" fill="#d1d5db" fontSize="14" fontFamily="monospace">Decision</text>
-              
+
               <rect x="350" y="270" width="100" height="60" rx="30" fill="#374151" stroke="#6b7280" strokeWidth="2" className="animate-pulse animation-delay-3000" />
               <text x="400" y="305" textAnchor="middle" fill="#d1d5db" fontSize="14" fontFamily="monospace">End</text>
-              
+
               {/* Cursor */}
               <g className="animate-bounce" style={{ animationDuration: '2s' }}>
                 <path d="M 520 250 L 520 270 L 528 262 L 535 275 L 540 272 L 533 259 L 545 259 Z" fill="#9ca3af" />
               </g>
             </svg>
-            
+
             <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
           </div>
         </div>
@@ -134,7 +129,7 @@ export default function ExcelidrawLanding() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
             {features.map((feature, index) => (
               <div
                 key={index}
@@ -162,17 +157,9 @@ export default function ExcelidrawLanding() {
               Join thousands of creators who are already using Excelidraw to bring their ideas to life.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center px-4">
-              <a href="/signup" className="inline-flex items-center justify-center w-full sm:w-auto bg-gradient-to-r from-gray-600 to-gray-800 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-full text-base sm:text-lg font-semibold hover:from-gray-700 hover:to-gray-900 transition-all duration-300 transform hover:scale-105">
-                Get Started Free
-              </a>
-              <Link href={{
-                pathname: '/auth',
-                query: {
-                  authType: 'signIn'
-                }
-              }} className="w-full sm:w-auto">
-                <Button className="w-full bg-gradient-to-r from-gray-600 to-gray-800 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-full text-base sm:text-lg font-semibold hover:from-gray-700 hover:to-gray-900 transition-all duration-300 transform hover:scale-105">
-                  Sign In
+              <Link href={{ pathname: "/auth", query: { authType: 'signUp' } }}>
+                <Button className="inline-flex items-center justify-center w-full sm:w-auto bg-gradient-to-r from-gray-600 to-gray-800 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-full text-base sm:text-lg font-semibold hover:from-gray-700 hover:to-gray-900 transition-all duration-300 transform hover:scale-105">
+                  Get Started Free
                 </Button>
               </Link>
             </div>

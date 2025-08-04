@@ -39,20 +39,6 @@ export default function Header() {
 
           {/* FIX: Wrapper for all right-side desktop elements */}
           <div className="hidden md:flex items-center space-x-10">
-            {/* Desktop Navigation */}
-            <div className="flex items-baseline space-x-4 lg:space-x-8">
-              <a href="#features" className="text-gray-300 hover:text-white transition-colors duration-200 px-2 py-1">
-                Features
-              </a>
-              <a href="#about" className="text-gray-300 hover:text-white transition-colors duration-200 px-2 py-1">
-                About
-              </a>
-              <a href="#pricing" className="text-gray-300 hover:text-white transition-colors duration-200 px-2 py-1">
-                Pricing
-              </a>
-            </div>
-
-            {/* Auth Buttons - Desktop */}
             <div className="flex items-center space-x-2 lg:space-x-4">
               {status === 'loading' && (
                 <div className="h-10 w-36 bg-gray-700 rounded-full animate-pulse"></div>
@@ -61,7 +47,7 @@ export default function Header() {
               {status === 'unauthenticated' && (
                 <>
                   <Link href={{ pathname: '/auth', query: { authType: 'signIn' } }}>
-                    <Button variant="ghost" className="text-gray-300 hover:text-white rounded-full transition-colors duration-200 px-3 lg:px-6 py-2 text-sm lg:text-base transform hover:scale-105 whitespace-nowrap">
+                    <Button variant="ghost" className="text-gray-300 hover:text-black rounded-full transition-colors duration-200 px-3 lg:px-6 py-2 text-sm lg:text-base transform hover:scale-105 whitespace-nowrap">
                       Sign In
                     </Button>
                   </Link>
