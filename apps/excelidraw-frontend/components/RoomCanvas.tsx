@@ -11,53 +11,57 @@ export function RoomCanvas({ roomId }: { roomId: string }) {
   console.log("RoomCanvas received roomId:", roomId, "Type:", typeof roomId);
 
   const [socket, setSocket] = useState<WebSocket | null>(null);
+  const [isConnected, setIsConnected] = useState(false);
   const router = useRouter();
   const { data: session, status } = useSession();
+  const userId = session?.user?.id;
 
   useEffect(() => {
     if (status === 'loading') {
       return;
     }
 
-    if (status === "unauthenticated") {
+    if (status !== "authenticated" || !userId) {
       toast.error("Yout must be logged in to view this page");
       router.push("/auth");
       return;
     }
 
-    if (status !== "authenticated" || !session?.user?.id) {
-      return;
-    }
-
-    const ws = new WebSocket(`${WS_URL}?sessionId=${session.user.id}`);
+    const ws = new WebSocket(`${WS_URL}?sessionId=${userId}`);
 
     ws.onopen = () => {
+      console.log('WebSocket connection established.');
       setSocket(ws);
-      ws.send(JSON.stringify({
-        type: "join_room",
-        roomId: roomId
-      }))
-    };
-
-    ws.onerror = (error) => {
-      console.error('WebSocket error:', error);
+      setIsConnected(true);
     };
 
     ws.onclose = (event) => {
+      console.warn('WebSocket connection closed.', { code: event.code, reason: event.reason });
+      setSocket(null);
       if (event.code === 1008) {
         router.push("/auth")
       }
+      setIsConnected(false);
     }
 
+    ws.onerror = (event) => {
+      console.warn('WebSocket error event', {
+        url: `${WS_URL}?sessionId=${userId}`,
+        readyState: ws.readyState,
+        type: event.type
+      });
+      setIsConnected(false);
+    };
     // cleanup function 
     return () => {
-      if (ws && ws.readyState === WebSocket.OPEN) {
-        ws.close(1000, "Component unmounting");
-      }
+      console.log("Cleaning up WebSocket connection.")
+      ws.close(1000, "Component unmounting or dependencies changed");
     }
-  }, [roomId, router, session, status])
+  }, [roomId, userId, status, router])
 
-  if (!socket) {
+
+
+  if (!isConnected || !socket) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 text-white flex items-center justify-center">
         <div className="text-center">

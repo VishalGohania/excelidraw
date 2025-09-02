@@ -36,14 +36,22 @@ export async function initDraw(canvas: HTMLCanvasElement, roomId: string, socket
 
     canvas.addEventListener("mousedown", (e) => {
       clicked = true;
-      startX = e.clientX;
-      startY = e.clientY
+      const rect = canvas.getBoundingClientRect();
+      const scaleX = canvas.width / rect.width;
+      const scaleY = canvas.height / rect.height;
+      startX = (e.clientX - rect.left) * scaleX;
+      startY = (e.clientY - rect.top) * scaleY;
     })
 
     canvas.addEventListener("mouseup", (e) => {
       clicked = false;
-      const width = e.clientX - startX;
-      const height = e.clientY - startY;
+      const rect = canvas.getBoundingClientRect();
+      const scaleX = canvas.width / rect.width;
+      const scaleY = canvas.height / rect.height;
+      const endX = (e.clientX - rect.left) * scaleX;
+      const endY = (e.clientY - rect.top) * scaleY;
+      const width = endX - startX;
+      const height = endY - startY;
 
       //@ts-ignore
       const selectedTool = window.selectedTool;
@@ -82,10 +90,15 @@ export async function initDraw(canvas: HTMLCanvasElement, roomId: string, socket
 
     canvas.addEventListener("mousemove", (e) => {
       if(clicked) {
-        const width = e.clientX - startX;
-        const height = e.clientY - startY;
-        clearCanvas(existingShape, canvas, ctx);
-        ctx.strokeStyle = "rgba(255, 255, 255)";
+        const rect = canvas.getBoundingClientRect();
+        const scaleX = canvas.width / rect.width;
+        const scaleY = canvas.height / rect.height;
+        const currentX = (e.clientX - rect.left) * scaleX;
+        const currentY = (e.clientY - rect.top) * scaleY;
+        const width = currentX - startX;
+        const height = currentY - startY;
+        // clearCanvas(existingShape, canvas, ctx);
+        // ctx.strokeStyle = "rgba(255, 255, 255)";
         //@ts-ignore
         const selectedTool = window.selectedTool;
         if(selectedTool === "rect") {

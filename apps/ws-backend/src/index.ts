@@ -85,9 +85,17 @@ async function getUserFromSessionId(sessionId: string): Promise<{ userId: string
         parsedData = JSON.parse(data);
       }
 
+      if(!userConnection) {
+        console.error("Received message from an unknown user connection.");
+        return;
+      }
+
       if(parsedData.type == "join_room"){
+        const roomId = String(parsedData.roomId);
         const user = users.find(x => x.ws === ws);
-        user?.rooms.push(parsedData.roomId);
+        if(!userConnection.rooms.includes(roomId)) {
+          userConnection.rooms.push(roomId);
+        }
         
         const room = await prisma.room.findUnique({
           where: { id: Number(parsedData.roomId)}
@@ -101,65 +109,58 @@ async function getUserFromSessionId(sessionId: string): Promise<{ userId: string
           return;
         }
 
-        userConnection.rooms.push(parsedData.roomId);
         ws.send(JSON.stringify({
           type: 'system',
-          message: `Joined room: ${room.slug}`
+          message: `Joined room: ${roomId}`
         }));
       }
 
       if(parsedData.type == "leave_room"){
+        const roomId = String(parsedData.roomId);
         const user = users.find(x => x.ws === ws);
         if(!user) {
           return;
         }
-        user.rooms = user?.rooms.filter(x => x !== parsedData.roomId)
+        userConnection.rooms = userConnection.rooms.filter(x => x !== roomId)
         ws.send(JSON.stringify({
           type: 'system',
           message: 'LEFT room'
         }));
       }
 
-      if(parsedData.type == "chat") {
-        const roomId = parsedData.roomId;
+      if(parsedData.type === "chat") {
+        const roomId = String(parsedData.roomId);
         const message = parsedData.message;
-      
+        
+        const room = await prisma.room.findUnique({
+          where: { slug: roomId}
+        })
+
+        if(!room) {
+          return;
+        }
       // save message to database
       await prisma.chat.create({
         data: {
-          roomId: Number(roomId),
-          message,
+          roomId: room.id,
+          message: message,
           userId: userConnection.userId
         }
       })
 
       // Broadcast to all users in the room
       users.forEach(user => {
-        if(user.rooms.includes(roomId) && user.ws.readyState === WebSocket.OPEN) {
+        if(user.rooms.includes(roomId) && user.userId !== userConnection.userId && user.ws !== ws && user.ws.readyState === WebSocket.OPEN) {
           user.ws.send(JSON.stringify({
             type: "chat",
             message: message,
-            roomId: userConnection.userId,
+            roomId: roomId,
             userName: userConnection.name,
             timestamp: new Date().toISOString()
           }));
         }    
       })
     }
-
-      if(parsedData.type == "draw") {
-        // Broadcast drawing data to all users in the room
-        users.forEach(user => {
-          if(user.rooms.includes(parsedData.roomId) && user.ws.readyState === WebSocket.OPEN) {
-            user.ws.send(JSON.stringify({
-              type: "draw",
-              data: parsedData.data,
-              roomId: parsedData.roomId,
-              userId: userConnection.userId
-            }))
-          }
-        })
-      }
   } catch (error) {
       console.error('Error handling message', error);
       ws.send(JSON.stringify({

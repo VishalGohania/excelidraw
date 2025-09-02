@@ -15,26 +15,69 @@ export function Canvas({ roomId, socket }: CanvasProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const gameRef = useRef<Game | null>(null);
   const [selectedTool, setSelectedTool] = React.useState<Tool>("circle");
+  const [isConnected, setIsConnected] = React.useState(false);
   const router = useRouter();
 
+  // Handle canvas resize
+  // const handleResize = useCallback(() => {
+  //   const canvas = canvasRef.current;
+  //   if (canvas && gameRef.current) {
+  //     const container = canvas.parentElement;
+  //     if (container) {
+  //       canvas.width = container.clientWidth;
+  //       canvas.height = container.clientHeight;
+  //       console.log("Canvas resized to:", canvas.width, "x", canvas.height);
+  //       gameRef.current.handleResize();
+  //     }
+  //   }
+  // }, []);
+
+  // Initialize canvas and game
   useEffect(() => {
     const canvas = canvasRef.current;
-    if (canvas) {
-      const { width, height } = canvas.getBoundingClientRect();
-      canvas.width = width;
-      canvas.height = height;
+    if (!canvas || !socket) return;
 
-      gameRef.current = new Game(canvas, roomId, socket);
-      gameRef.current.setTool(selectedTool);
+    // Prevent multiple initializations
+    if (gameRef.current) {
+      console.log("Game already initialized, skipping");
+      return;
     }
 
+    console.log("Initializing new Game instance for room:", roomId);
+
+    // Set initial canvas size
+    const container = canvas.parentElement;
+    if (container) {
+      canvas.width = container.clientWidth;
+      canvas.height = container.clientHeight;
+      console.log("Canvas size set to:", canvas.width, "x", canvas.height);
+    }
+
+    // Initialize game
+    const game = new Game(canvas, roomId, socket);
+    gameRef.current = game;
+
+    // Add resize listener
+    const handleResize = () => game.handleResize();
+    window.addEventListener('resize', handleResize);
+
+    // Monitor WebSocket connection
+    const connectionInterval = setInterval(() => {
+      setIsConnected(socket.readyState === WebSocket.OPEN);
+    }, 1000);
+
     return () => {
+      console.log("Cleaning up Game instance");
+      window.removeEventListener('resize', handleResize);
+      clearInterval(connectionInterval);
       if (gameRef.current) {
         gameRef.current.destroy();
+        gameRef.current = null;
       }
     };
   }, [roomId, socket]);
 
+  // Update tool when selection changes
   useEffect(() => {
     if (gameRef.current) {
       gameRef.current.setTool(selectedTool);
@@ -46,16 +89,18 @@ export function Canvas({ roomId, socket }: CanvasProps) {
     if (socket && socket.readyState === WebSocket.OPEN) {
       socket.send(JSON.stringify({
         type: "leave_room",
-        roomId: roomId
+        roomId: gameRef.current?.getRoomId() ?? undefined
       }));
     }
-
+    // Clean up game
+    if (gameRef.current) {
+      gameRef.current.destroy();
+    }
     // Navigate back to rooms page
     router.push("/room");
   };
 
   const getRoomDisplayName = (slug: string) => {
-    // Extract room name from slug (remove timestamp)
     return slug.split('-').slice(0, -1).join('-') || slug;
   };
 
@@ -125,8 +170,11 @@ export function Canvas({ roomId, socket }: CanvasProps) {
         <div className="w-full h-full bg-gradient-to-r from-gray-800/20 to-black/20 backdrop-blur-sm rounded-lg shadow-2xl border border-white/10 p-1 sm:p-2">
           <canvas
             ref={canvasRef}
-            className="w-full h-full rounded-lg cursor-crosshair"
-            style={{ backgroundColor: '#111827' }}
+            className="w-full h-full rounded-lg cursor-crosshair block"
+            style={{
+              backgroundColor: '#111827',
+              imageRendering: 'pixelated' // Prevent canvas scaling blur
+            }}
           />
         </div>
       </div>
@@ -134,8 +182,8 @@ export function Canvas({ roomId, socket }: CanvasProps) {
       {/* Status Bar */}
       <div className="fixed bottom-2 right-2 sm:bottom-4 sm:right-4 bg-gray-800 text-white px-2 py-1 sm:px-4 sm:py-2 rounded-lg shadow-lg mr-4">
         <div className="flex items-center gap-2">
-          <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-          <span className="text-xs sm:text-sm">Connected</span>
+          <div className={`w-2 h-2 rounded-full ${isConnected ? 'bg-green-500' : 'bg-red-500'}`}></div>
+          <span className="text-xs sm:text-sm">{isConnected ? 'Connected' : 'Disconnected'}</span>
         </div>
       </div>
     </div>
