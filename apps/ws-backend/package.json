@@ -10,7 +10,7 @@
   "devDependencies": {
     "@repo/typescript-config": "workspace:*",
     "@repo/backend-common": "workspace:*"
-    
+      
   },
   "keywords": [],
   "author": "",
