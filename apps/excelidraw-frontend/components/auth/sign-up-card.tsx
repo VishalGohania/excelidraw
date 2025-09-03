@@ -12,6 +12,7 @@ import { signIn } from "next-auth/react";
 import { SignInFlow } from "@/types/auth-types";
 import { http } from "@/draw/http";
 import { toast } from "react-toastify";
+import { getErrorMessage } from "@/lib/errors";
 
 interface SignupCardProps {
   setFormType: (state: SignInFlow) => void;
@@ -45,8 +46,8 @@ export default function SignupCard({ setFormType: setState }: SignupCardProps) {
       toast.success("Account created successfully! Please sign in.");
       setState("signIn");
 
-    } catch (err: any) {
-      const errorMessage = err.response?.data?.message || "An unexpected errro occured";
+    } catch (err: unknown) {
+      const errorMessage = getErrorMessage(err);
       setError(errorMessage);
       toast.error(errorMessage);
     } finally {

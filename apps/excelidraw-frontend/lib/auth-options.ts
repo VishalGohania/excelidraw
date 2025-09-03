@@ -39,8 +39,11 @@ export const authOptions: NextAuthOptions = {
 
             const responseData = await res.json();
             return responseData.data;
-          } catch (error: any) {
-            throw new Error(error.message);
+          } catch (error: unknown) {
+            const errorMessage = error instanceof Error 
+            ? error.message 
+            : "An unexpected error occurred";
+            throw new Error(errorMessage);
           }
         }
         return null;
@@ -56,7 +59,10 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     async jwt({ token, user, account }) {
       if (user) {
-        const backendUser = user as any;
+        const backendUser = user as {
+          token?: string;
+          user?: { id: string}
+        };
         token.accessToken = backendUser.token;
         token.id = backendUser.user?.id;
       }

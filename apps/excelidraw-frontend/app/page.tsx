@@ -6,13 +6,6 @@ import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 
 export default function ExcelidrawLanding() {
-  const [scrollY, setScrollY] = React.useState(0);
-
-  React.useEffect(() => {
-    const handleScroll = () => setScrollY(window.scrollY);
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
 
   const features = [
     {

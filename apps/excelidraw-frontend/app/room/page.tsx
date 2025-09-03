@@ -7,6 +7,8 @@ import { Button } from "@/components/ui/button";
 import { toast } from "react-toastify";
 import { Input } from "@/components/ui/input";
 import { http } from "@/draw/http";
+import { useCallback } from "react";
+import { getErrorMessage } from "@/lib/errors";
 
 interface Room {
     id: number;
@@ -26,11 +28,8 @@ export default function RoomPage() {
     const [existingRooms, setExistingRooms] = useState<Room[]>([])
 
 
-    useEffect(() => {
-        fetchExistingRooms();
-    }, [session])
 
-    const fetchExistingRooms = async () => {
+    const fetchExistingRooms = useCallback(async () => {
         if (!session?.accessToken) {
             setIsLoadingRooms(false);
             return;
@@ -52,7 +51,11 @@ export default function RoomPage() {
         } finally {
             setIsLoadingRooms(false);
         }
-    }
+    }, [session?.accessToken]);
+
+    useEffect(() => {
+        fetchExistingRooms();
+    }, [fetchExistingRooms])
 
     const handleCreateRoom = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -80,22 +83,22 @@ export default function RoomPage() {
                 {
                     headers: {
                         Authorization: `Bearer ${session.accessToken}`,
-                    }
+                    },
                 }
             );
 
-
             // Redirect to the canvas page using the unique room name from the response
             if (data?.data?.room?.slug) {
-                toast.success(`Room "${roomName}" created!`)
+                toast.success(`Room "${roomName}" created!`);
                 router.push(`/canvas/${data.data.room.slug}`);
             } else {
-                const errorMessage = data?.message || "Failed to get room details from server."
+                const errorMessage =
+                    data?.message || "Failed to get room details from server.";
                 setError(errorMessage);
                 toast.error(errorMessage);
             }
-        } catch (error: any) {
-            const errorMessage = error.response?.data?.message || "Failed to create room details from server."
+        } catch (error: unknown) {
+            const errorMessage = getErrorMessage(error)
             setError(errorMessage);
             toast.error(errorMessage);
         } finally {

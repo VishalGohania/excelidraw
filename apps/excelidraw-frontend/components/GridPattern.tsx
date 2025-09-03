@@ -30,7 +30,7 @@ function Pattern({
 }) {
   const id = useId();
   const ref = useRef<SVGSVGElement>(null);
-  // @ts-ignore
+  // @ts-expect-error - currentBlock ref typing issue
   const currentBlock = useRef<[x: number, y: number]>();
   const counter = useRef(0);
   const [hoveredBlocks, setHoveredBlocks] = useState<
