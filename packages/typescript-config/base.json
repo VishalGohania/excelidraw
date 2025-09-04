@@ -3,6 +3,7 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
+      "@repo/db": ["packages/db/src"],
       "@repo/db/*": ["packages/db/src/*"]  
     },
     "declaration": true,
