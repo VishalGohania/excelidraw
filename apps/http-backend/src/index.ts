@@ -22,11 +22,6 @@ app.use(notFound);
 app.use(errorHandler);
 
 
-
-app.use(notFound);
-app.use(errorHandler);
-
-
 const PORT = process.env.PORT || 3001;
 
 app.listen(PORT, () => {

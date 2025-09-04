@@ -13,8 +13,11 @@
     }
   },
   "scripts": {
-  "build": "tsc -b",
-  "clean": "rm -rf dist"
+    "build": "prisma generate && tsc -b",
+    "clean": "rm -rf dist",
+    "db:generate": "prisma generate",
+    "db:push": "prisma db push",
+    "db:migrate": "prisma migrate dev"
   },
   "devDependencies": {
     "@repo/typescript-config": "workspace:*",
