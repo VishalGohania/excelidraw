@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "build": "tsc -b",
+    "build": "tsc -b && tscpaths -p tsconfig.json -s . -o ./dist",
     "start": "node ./dist/index.js",
     "dev": "npm run build && npm run start",
     "postinstall": "cd ../../packages/db && pnpm exec prisma generate"
@@ -12,7 +12,8 @@
     "@repo/backend-common": "workspace:*",
     "@repo/common": "workspace:*",
     "@repo/typescript-config": "workspace:*",
-    "@types/bcrypt": "^5.0.2"
+    "@types/bcrypt": "^5.0.2",
+    "tscpaths": "^0.0.9"
   },
   "keywords": [],
   "author": "",
