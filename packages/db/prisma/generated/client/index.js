@@ -181,8 +181,8 @@ const config = {
       }
     }
   },
-  "inlineSchema": "generator client {\n  provider = \"prisma-client-js\"\n  output   = \"./generated/client\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n\nmodel User {\n  id       String  @id @default(uuid())\n  email    String  @unique\n  password String\n  name     String\n  photo    String?\n  rooms    Room[]\n  chats    Chat[]\n}\n\nmodel Room {\n  id        Int      @id @default(autoincrement())\n  slug      String   @unique\n  createdAt DateTime @default(now())\n  adminId   String\n  admin     User     @relation(fields: [adminId], references: [id])\n  chats     Chat[]\n}\n\nmodel Chat {\n  id      Int    @id @default(autoincrement())\n  roomId  Int\n  message String\n  userId  String\n  user    User   @relation(fields: [userId], references: [id])\n  room    Room   @relation(fields: [roomId], references: [id])\n}\n",
-  "inlineSchemaHash": "413a0606ee01ec18aca9afb495341d20b47f128a5ac67b9a1aacc83dc351dc42",
+  "inlineSchema": "generator client {\n  provider   = \"prisma-client-js\"\n  output     = \"./generated/client\"\n  engineType = \"library\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n\nmodel User {\n  id       String  @id @default(uuid())\n  email    String  @unique\n  password String\n  name     String\n  photo    String?\n  rooms    Room[]\n  chats    Chat[]\n}\n\nmodel Room {\n  id        Int      @id @default(autoincrement())\n  slug      String   @unique\n  createdAt DateTime @default(now())\n  adminId   String\n  admin     User     @relation(fields: [adminId], references: [id])\n  chats     Chat[]\n}\n\nmodel Chat {\n  id      Int    @id @default(autoincrement())\n  roomId  Int\n  message String\n  userId  String\n  user    User   @relation(fields: [userId], references: [id])\n  room    Room   @relation(fields: [roomId], references: [id])\n}\n",
+  "inlineSchemaHash": "6b1c7c4bf30d3d8fe395b981079c89083bdcdb68147fc24c2f532bcb7aceb54d",
   "copyEngine": true
 }
 
