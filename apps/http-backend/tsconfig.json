@@ -2,8 +2,11 @@
   "extends": "@repo/typescript-config/base.json",
   "compilerOptions": {
     "rootDir": "./src",
-    "outDir": "./dist",
-    "typeRoots": ["./node_modules/@types", "./src/types"]
+    "outDir": "./dist"
   },
-  "include": ["src/**/*"]
+  "references": [
+    { "path": "../../packages/backend-common" },
+    { "path": "../../packages/db" },
+    { "path": "../../packages/common" }
+  ]
 }
