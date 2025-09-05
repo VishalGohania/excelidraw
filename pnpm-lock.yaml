@@ -7,13 +7,14 @@ settings:
 importers:
 
   .:
+    dependencies:
+      turbo:
+        specifier: ^2.5.6
+        version: 2.5.6
     devDependencies:
       prettier:
         specifier: ^3.4.2
         version: 3.6.2
-      turbo:
-        specifier: ^2.4.0
-        version: 2.5.6
       typescript:
         specifier: 5.7.3
         version: 5.7.3
@@ -5876,7 +5877,6 @@ packages:
     cpu: [x64]
     os: [darwin]
     requiresBuild: true
-    dev: true
     optional: true
 
   /turbo-darwin-arm64@2.5.6:
@@ -5884,7 +5884,6 @@ packages:
     cpu: [arm64]
     os: [darwin]
     requiresBuild: true
-    dev: true
     optional: true
 
   /turbo-linux-64@2.5.6:
@@ -5892,7 +5891,6 @@ packages:
     cpu: [x64]
     os: [linux]
     requiresBuild: true
-    dev: true
     optional: true
 
   /turbo-linux-arm64@2.5.6:
@@ -5900,7 +5898,6 @@ packages:
     cpu: [arm64]
     os: [linux]
     requiresBuild: true
-    dev: true
     optional: true
 
   /turbo-windows-64@2.5.6:
@@ -5908,7 +5905,6 @@ packages:
     cpu: [x64]
     os: [win32]
     requiresBuild: true
-    dev: true
     optional: true
 
   /turbo-windows-arm64@2.5.6:
@@ -5916,7 +5912,6 @@ packages:
     cpu: [arm64]
     os: [win32]
     requiresBuild: true
-    dev: true
     optional: true
 
   /turbo@2.5.6:
@@ -5929,7 +5924,6 @@ packages:
       turbo-linux-arm64: 2.5.6
       turbo-windows-64: 2.5.6
       turbo-windows-arm64: 2.5.6
-    dev: true
 
   /type-check@0.4.0:
     resolution: {integrity: sha512-XleUoc9uwGXqjWwXaUTZAmzMcFZ5858QA2vvx1Ur5xIcixXIP+8LnFDgRplU30us6teqdlskFfu+ae4K79Ooew==}
