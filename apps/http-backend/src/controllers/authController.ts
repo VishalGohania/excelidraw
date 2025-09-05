@@ -3,7 +3,7 @@ import bcrypt from "bcrypt";
 import prisma from "@repo/db";
 
 import jwt from "jsonwebtoken";
-import { JWT_SECRET } from "@repo/backend-common/config";
+import { JWT_SECRET } from "@repo/backend-common";
 import { json, serverError, unauthorized } from "../utils/response";
 import { CreateUserSchema, SigninSchema } from "@repo/common/types";
 
