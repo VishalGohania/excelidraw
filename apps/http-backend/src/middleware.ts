@@ -2,7 +2,7 @@ import { NextFunction, Request, RequestHandler, Response } from "express";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import  prisma  from "@repo/db"
 
-import {JWT_SECRET} from '@repo/backend-common/config';
+import { JWT_SECRET } from '@repo/backend-common/config';
 import { unauthorized, forbidden } from "./utils/response";
 
 export interface AuthRequest extends Request {
