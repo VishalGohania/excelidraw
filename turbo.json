@@ -9,17 +9,18 @@
     },
     "@repo/db#build": {
       "dependsOn": ["@repo/db#db:generate"],
-      "outputs": ["dist/**"]
+      "outputs": ["dist/**", "dist/*.d.ts"] 
     },
     "@repo/backend-common#build": {
-      "outputs": ["dist/**"]
-    },
-    "@repo/common#build": {
-      "outputs": ["dist/**"]
+      "outputs": ["dist/**", "dist/*.d.ts"]
     },
     "http-backend#build": {
-      "dependsOn": ["@repo/db#build", "@repo/backend-common#build", "@repo/common#build"],
+      "dependsOn": ["^build"],
       "outputs": ["dist/**"]
+    },
+    "ws-backend#build": {  
+      "dependsOn": ["@repo/db#build", "@repo/backend-common#build"],
+      "outputs": ["dist/**", "dist/*.d.ts"]
     },
     "db:generate": {
       "cache": false,
