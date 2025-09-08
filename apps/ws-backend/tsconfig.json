@@ -3,21 +3,21 @@
   "compilerOptions": {
     "rootDir": "./src",
     "outDir": "./dist",
-    "composite": true,  // Enable for project references
+    "composite": true,  
     "incremental": true,
-    "declaration": true,  // Generate .d.ts files
-    "declarationMap": true,  // For better IDE navigation
+    "declaration": true,  
+    "declarationMap": true,
     "moduleResolution": "node",
     "module": "CommonJS",
     "baseUrl": ".",
-    "paths": {  // Map to source for build-time resolution
+    "paths": {  
       "@repo/db": ["../../packages/db/src/index"],
       "@repo/db/*": ["../../packages/db/src/*"],
       "@repo/backend-common": ["../../packages/backend-common/src/index"],
       "@repo/backend-common/*": ["../../packages/backend-common/src/*"]
     }
   },
-  "references": [  // Reference dependent packages
+  "references": [  
     { "path": "../../packages/backend-common" },
     { "path": "../../packages/db" }
   ],

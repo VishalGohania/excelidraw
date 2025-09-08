@@ -26,6 +26,9 @@
       "cache": false,
       "outputs": ["node_modules/.prisma/**"]
     },
+    "clean": {  
+      "cache": false
+    },
     "lint": {
       "dependsOn": ["^lint"]
     },
