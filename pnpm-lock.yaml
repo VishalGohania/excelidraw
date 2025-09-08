@@ -158,6 +158,9 @@ importers:
 
   apps/ws-backend:
     dependencies:
+      '@repo/backend-common':
+        specifier: workspace:*
+        version: link:../../packages/backend-common
       '@repo/db':
         specifier: workspace:*
         version: link:../../packages/db
@@ -174,9 +177,6 @@ importers:
         specifier: ^8.18.0
         version: 8.18.3
     devDependencies:
-      '@repo/backend-common':
-        specifier: workspace:*
-        version: link:../../packages/backend-common
       '@repo/typescript-config':
         specifier: workspace:*
         version: link:../../packages/typescript-config

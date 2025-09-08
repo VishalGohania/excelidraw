@@ -2,6 +2,25 @@
   "extends": "@repo/typescript-config/base.json",
   "compilerOptions": {
     "rootDir": "./src",
-    "outDir": "./dist"
-  }
+    "outDir": "./dist",
+    "composite": true,  // Enable for project references
+    "incremental": true,
+    "declaration": true,  // Generate .d.ts files
+    "declarationMap": true,  // For better IDE navigation
+    "moduleResolution": "node",
+    "module": "CommonJS",
+    "baseUrl": ".",
+    "paths": {  // Map to source for build-time resolution
+      "@repo/db": ["../../packages/db/src/index"],
+      "@repo/db/*": ["../../packages/db/src/*"],
+      "@repo/backend-common": ["../../packages/backend-common/src/index"],
+      "@repo/backend-common/*": ["../../packages/backend-common/src/*"]
+    }
+  },
+  "references": [  // Reference dependent packages
+    { "path": "../../packages/backend-common" },
+    { "path": "../../packages/db" }
+  ],
+  "include": ["src"],
+  "exclude": ["node_modules", "dist"]
 }
