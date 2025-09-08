@@ -4,15 +4,15 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "exports": {
-    "./config": {
-      "types": "./dist/config.d.ts",
-      "require": "./dist/config.js",
-      "import": "./dist/config.js"
-    },
     ".": {
       "types": "./dist/index.d.ts", 
       "require": "./dist/index.js",
       "import": "./dist/index.js"
+    },
+    "./config": {
+      "types": "./dist/config.d.ts",
+      "require": "./dist/config.js",
+      "import": "./dist/config.js"
     }
   },
   "scripts": {
