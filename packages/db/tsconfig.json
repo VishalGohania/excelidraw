@@ -6,7 +6,7 @@
     "types": ["node"],
     "composite": true,
     "incremental": true,
-    "declaration": true,
+    "declaration": true
   },
   "include": ["src"],
   "exclude": ["node_modules", "dist"]

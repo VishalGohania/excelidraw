@@ -7,9 +7,20 @@
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
       "outputs": [".next/**", "!.next/cache/**", "dist/**"]
     },
+    "@repo/db#build": {
+      "dependsOn": ["db:generate"],
+      "outputs": ["dist/**"]
+    },
+    "@repo/backend-common#build": {
+      "outputs": ["dist/**"]
+    },
+    "http-backend#build": {
+      "dependsOn": ["^build"],
+      "outputs": ["dist/**"]
+    },
     "db:generate": {
       "cache": false,
-      "outputs": []
+      "outputs": ["node_modules/.prisma/**"]
     },
     "lint": {
       "dependsOn": ["^lint"]
