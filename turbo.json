@@ -8,14 +8,17 @@
       "outputs": [".next/**", "!.next/cache/**", "dist/**"]
     },
     "@repo/db#build": {
-      "dependsOn": ["db:generate"],
+      "dependsOn": ["@repo/db#db:generate"],
       "outputs": ["dist/**"]
     },
     "@repo/backend-common#build": {
       "outputs": ["dist/**"]
     },
+    "@repo/common#build": {
+      "outputs": ["dist/**"]
+    },
     "http-backend#build": {
-      "dependsOn": ["^build"],
+      "dependsOn": ["@repo/db#build", "@repo/backend-common#build", "@repo/common#build"],
       "outputs": ["dist/**"]
     },
     "db:generate": {
