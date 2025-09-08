@@ -2,8 +2,8 @@ import { Request, RequestHandler, Response } from "express";
 import { AuthRequest } from "../middleware";
 import { json, serverError, unauthorized } from "../utils/response";
 import slugify from "slugify";
-// import prisma from "@repo/db";
-import prisma from "../../../../packages/db/src/clients";
+import prisma from "@repo/db";
+// import prisma from "../../../../packages/db/src/clients";
 
 export const createRoom: RequestHandler = async (req: AuthRequest, res: Response) => {
   try {
@@ -11,12 +11,12 @@ export const createRoom: RequestHandler = async (req: AuthRequest, res: Response
 
     const user = req.user;
 
-    if(!user || !user.id) {
+    if (!user || !user.id) {
       serverError(res, "Authentication error: User not found on request");
       return;
     }
 
-    if(!roomName || typeof roomName !== 'string' || roomName.trim() === '') {
+    if (!roomName || typeof roomName !== 'string' || roomName.trim() === '') {
       serverError(res, "Room name is required and cannot be empty");
       return;
     }
@@ -52,14 +52,14 @@ export const getUserRooms: RequestHandler = async (req: AuthRequest, res: Respon
   try {
     const user = req.user;
 
-    if(!user || !user.id) {
+    if (!user || !user.id) {
       serverError(res, "Authentication error: User not found on request");
       return;
     }
 
     // Get rooms where user is admin (created by user)
     const rooms = await prisma.room.findMany({
-      where : {
+      where: {
         adminId: user.id
       },
       select: {

@@ -1,12 +1,13 @@
 import { RequestHandler } from "express";
-import prisma from "../../../../packages/db/src/clients";
+// import prisma from "../../../../packages/db/src/clients";
+import prisma from "@repo/db";
 import { json, serverError } from "../utils/response";
 
 
 export const getRoomBySlug: RequestHandler = async (req, res) => {
   try {
     const slug = req.params.slug;
-    if(!slug) {
+    if (!slug) {
       serverError(res, "Room slug is required.")
       return;
     }
@@ -15,7 +16,7 @@ export const getRoomBySlug: RequestHandler = async (req, res) => {
         slug
       }
     });
-    if(!room) {
+    if (!room) {
       res.status(404).json({ message: "Room not found" });
       return;
     }
@@ -25,19 +26,19 @@ export const getRoomBySlug: RequestHandler = async (req, res) => {
   }
 }
 
-export const getChatByRoomId: RequestHandler = async (req, res)  => {
+export const getChatByRoomId: RequestHandler = async (req, res) => {
   try {
     const roomIdParam = req.params.roomId;
-    if(!roomIdParam) {
+    if (!roomIdParam) {
       serverError(res, "RoomId is required");
       return;
     }
     const roomId = parseInt(roomIdParam, 10);
-    if(isNaN(roomId)) {
+    if (isNaN(roomId)) {
       serverError(res, "Invalid Room Id. Must be a number")
       return;
     }
-    
+
     const messages = await prisma.chat.findMany({
       where: {
         roomId: roomId
@@ -49,7 +50,7 @@ export const getChatByRoomId: RequestHandler = async (req, res)  => {
     });
 
     json(res, { messages })
-    
+
   } catch (error) {
     serverError(res, "Server error while fetching chats");
   }

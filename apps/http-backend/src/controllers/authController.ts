@@ -1,16 +1,19 @@
 import { RequestHandler, Request, Response } from "express";
 import bcrypt from "bcrypt";
-import prisma from "../../../../packages/db/src/clients";
+// import prisma from "../../../../packages/db/src/clients";
+import prisma from "@repo/db";
 import jwt from "jsonwebtoken";
-import { JWT_SECRET } from "../../../../packages/backend-common/src/config";
+// import { JWT_SECRET } from "../../../../packages/backend-common/src/config";
+import { JWT_SECRET } from "@repo/backend-common";
 import { json, serverError, unauthorized } from "../utils/response";
-import { CreateUserSchema, SigninSchema } from "../../../../packages/common/src/types";
+// import { CreateUserSchema, SigninSchema } from "../../../../packages/common/src/types";
+import { CreateUserSchema, SigninSchema } from "@repo/common/types"
 
 export const signupController: RequestHandler = async (req: Request, res: Response) => {
   const parsedData = CreateUserSchema.safeParse(req.body);
   if (!parsedData.success) {
     serverError(res, "Incorrect inputs provided for signup.");
-    return; 
+    return;
   }
 
   try {
@@ -40,7 +43,7 @@ export const signinController: RequestHandler = async (req: Request, res: Respon
   const parsedData = SigninSchema.safeParse(req.body);
   if (!parsedData.success) {
     serverError(res, "Incorrect inputs provided for signin.");
-    return; 
+    return;
   }
 
   try {
@@ -62,31 +65,31 @@ export const signinController: RequestHandler = async (req: Request, res: Respon
 };
 
 export const googleUserController: RequestHandler = async (req: Request, res: Response) => {
-    try {
-        const { email, name, image } = req.body;
-        if (!email) {
-            serverError(res, "Email is required for Google sign-in.");
-            return; 
-        }
-
-        let user = await prisma.user.findUnique({ where: { email } });
-
-        if (!user) {
-            user = await prisma.user.create({
-                data: {
-                    email,
-                    name: name || email.split('@')[0],
-                    password: '', 
-                    photo: image
-                }
-            });
-        }
-
-        const token = jwt.sign({ id: user.id }, JWT_SECRET);
-        json(res, { token, user: { id: user.id, name: user.name, email: user.email } });
-
-    } catch (e) {
-        console.error("Google User Error:", e);
-        serverError(res, "An unexpected error occurred during Google sign-in.");
+  try {
+    const { email, name, image } = req.body;
+    if (!email) {
+      serverError(res, "Email is required for Google sign-in.");
+      return;
     }
+
+    let user = await prisma.user.findUnique({ where: { email } });
+
+    if (!user) {
+      user = await prisma.user.create({
+        data: {
+          email,
+          name: name || email.split('@')[0],
+          password: '',
+          photo: image
+        }
+      });
+    }
+
+    const token = jwt.sign({ id: user.id }, JWT_SECRET);
+    json(res, { token, user: { id: user.id, name: user.name, email: user.email } });
+
+  } catch (e) {
+    console.error("Google User Error:", e);
+    serverError(res, "An unexpected error occurred during Google sign-in.");
+  }
 };

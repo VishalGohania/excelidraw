@@ -1,8 +1,9 @@
 import { NextFunction, Request, RequestHandler, Response } from "express";
 import jwt, { JwtPayload } from "jsonwebtoken";
-import prisma from "../../../packages/db/src/clients";
-import { JWT_SECRET } from "../../../packages/backend-common/src/config";
-
+// import prisma from "../../../packages/db/src/clients";
+import prisma from "@repo/db";
+// import { JWT_SECRET } from "../../../packages/backend-common/src/config";
+import { JWT_SECRET } from "@repo/backend-common";
 
 import { unauthorized, forbidden } from "./utils/response";
 
