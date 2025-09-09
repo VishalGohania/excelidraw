@@ -1,14 +1,12 @@
 import { NextFunction, Request, RequestHandler, Response } from "express";
 import jwt, { JwtPayload } from "jsonwebtoken";
-// import prisma from "../../../packages/db/src/clients";
 import prisma from "@repo/db";
-// import { JWT_SECRET } from "../../../packages/backend-common/src/config";
 import { JWT_SECRET } from "@repo/backend-common";
 
 import { unauthorized, forbidden } from "./utils/response";
 
 export interface AuthRequest extends Request {
-  user? : {
+  user?: {
     id: string
   }
 };
@@ -41,7 +39,7 @@ export const protect: RequestHandler = async (
   next: NextFunction
 ) => {
   let token;
-  if(
+  if (
     req.headers.authorization &&
     req.headers.authorization.startsWith("Bearer")
   ) {
@@ -58,12 +56,12 @@ export const protect: RequestHandler = async (
         }
       })
 
-      if(!user) {
+      if (!user) {
         forbidden(res, "Invalid token: User not found");
         return;
       }
 
-      req.user = {id: user.id};
+      req.user = { id: user.id };
       next();
 
     } catch (error) {
@@ -73,7 +71,7 @@ export const protect: RequestHandler = async (
     }
   }
 
-  if(!token) {
+  if (!token) {
     unauthorized(res, "Not authorized, no token provided.");
     return;
   }

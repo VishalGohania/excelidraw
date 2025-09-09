@@ -1,6 +1,7 @@
 {
   "extends": "@repo/typescript-config/base.json",
   "compilerOptions": {
+    "noEmit": false,
     "outDir": "dist",
     "rootDir": "src",
     "composite": true,
@@ -8,6 +9,8 @@
     "declaration": true,
     "declarationMap": true
   },
-  "include": ["src"],
-  "exclude": ["node_modules", "dist"]
+  "files": [
+    "src/index.ts",
+    "src/types.ts"
+  ]
 }
