@@ -18,7 +18,11 @@
       "outputs": ["dist/**", "dist/*.d.ts"]
     },
     "http-backend#build": {
-      "dependsOn": ["^build"],
+      "dependsOn": [
+        "@repo/db#build",
+        "@repo/backend-common#build",
+        "@repo/common#build"
+     ],
       "outputs": ["dist/**"]
     },
     "ws-backend#build": {  
