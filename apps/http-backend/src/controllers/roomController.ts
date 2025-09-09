@@ -3,7 +3,6 @@ import { AuthRequest } from "../middleware";
 import { json, serverError, unauthorized } from "../utils/response";
 import slugify from "slugify";
 import prisma from "@repo/db";
-// import prisma from "../../../../packages/db/src/clients";
 
 export const createRoom: RequestHandler = async (req: AuthRequest, res: Response) => {
   try {

@@ -11,6 +11,9 @@
       "dependsOn": ["@repo/db#db:generate"],
       "outputs": ["dist/**", "dist/*.d.ts"] 
     },
+    "@repo/common#build": { 
+      "outputs": ["dist/**", "dist/*.d.ts"] 
+    },
     "@repo/backend-common#build": {
       "outputs": ["dist/**", "dist/*.d.ts"]
     },

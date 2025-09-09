@@ -1,5 +1,4 @@
 import { RequestHandler } from "express";
-// import prisma from "../../../../packages/db/src/clients";
 import prisma from "@repo/db";
 import { json, serverError } from "../utils/response";
 

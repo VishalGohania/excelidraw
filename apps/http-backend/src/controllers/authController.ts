@@ -1,12 +1,9 @@
 import { RequestHandler, Request, Response } from "express";
 import bcrypt from "bcrypt";
-// import prisma from "../../../../packages/db/src/clients";
 import prisma from "@repo/db";
 import jwt from "jsonwebtoken";
-// import { JWT_SECRET } from "../../../../packages/backend-common/src/config";
 import { JWT_SECRET } from "@repo/backend-common";
 import { json, serverError, unauthorized } from "../utils/response";
-// import { CreateUserSchema, SigninSchema } from "../../../../packages/common/src/types";
 import { CreateUserSchema, SigninSchema } from "@repo/common/types"
 
 export const signupController: RequestHandler = async (req: Request, res: Response) => {
