@@ -1,7 +1,7 @@
 {
   "buildCommand": "cd ../.. && npm run build --filter=excelidraw-frontend",
   "outputDirectory": ".next",
-  "installCommand": "npm install",
+  "installCommand": "corepack enable && pnpm install --no-frozen-lockfile",
   "framework": "nextjs",
   "env": {
     "NEXTAUTH_URL": "https://your-app.vercel.app",
