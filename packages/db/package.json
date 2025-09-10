@@ -11,7 +11,7 @@
     }
   },
   "scripts": {
-    "build": "prisma generate && tsc -b",
+    "build": "prisma generate && tsc -b --force",
     "clean": "rm -rf dist",
     "postinstall": "prisma generate"
   },
