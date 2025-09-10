@@ -1,7 +1,11 @@
 import { WebSocketServer, WebSocket } from "ws";
 import prisma from "@repo/db";
 
-const wss = new WebSocketServer({ port: 8080 });
+const port = Number(process.env.PORT) || 8080;
+const wss = new WebSocketServer({
+  port,
+  host: "0.0.0.0"
+});
 
 interface User {
   ws: WebSocket,
@@ -181,4 +185,4 @@ wss.on('connection', async function connection(ws, request) {
   });
 });
 
-console.log('WebSocket server running on port 8080');
+console.log(`WebSocket server running on port ${port}`);
