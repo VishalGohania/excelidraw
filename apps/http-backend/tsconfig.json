@@ -6,16 +6,7 @@
     "composite": true,
     "incremental": true,
     "moduleResolution": "node",
-    "module": "CommonJS",
-    "baseUrl": ".",
-    "paths": {
-      "@repo/db": ["../../packages/db/src/index"],
-      "@repo/db/*": ["../../packages/db/src/*"],
-      "@repo/backend-common": ["../../packages/backend-common/src/index"],
-      "@repo/backend-common/*": ["../../packages/backend-common/src/*"],
-      "@repo/common": ["../../packages/common/src/index"],
-      "@repo/common/*": ["../../packages/common/src/*"]
-    }
+    "module": "CommonJS"
   },
   "references": [
     { "path": "../../packages/backend-common" },

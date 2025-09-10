@@ -4,7 +4,7 @@ import prisma from "@repo/db";
 import jwt from "jsonwebtoken";
 import { JWT_SECRET } from "@repo/backend-common";
 import { json, serverError, unauthorized } from "../utils/response";
-import { CreateUserSchema, SigninSchema } from "@repo/common/types"
+import { CreateUserSchema, SigninSchema } from "@repo/common"
 
 export const signupController: RequestHandler = async (req: Request, res: Response) => {
   const parsedData = CreateUserSchema.safeParse(req.body);
