@@ -8,6 +8,8 @@
     "declaration": true,
     "declarationMap": true
   },
-  "include": ["src"],
-  "exclude": ["node_modules", "dist"]
+  "files": [
+    "src/index.ts",
+    "src/config.ts"
+  ]
 }
