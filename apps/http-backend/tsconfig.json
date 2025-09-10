@@ -5,8 +5,8 @@
     "outDir": "./dist",
     "composite": true,
     "incremental": true,
-    "moduleResolution": "node",
-    "module": "CommonJS"
+    "module": "Node16",
+    "moduleResolution": "Node16"
   },
   "references": [
     { "path": "../../packages/backend-common" },
