@@ -16,10 +16,11 @@ export default function AuthPage() {
   const router = useRouter();
 
   useEffect(() => {
-    if (status === "authenticated") {
-      router.push("/room")
+    if (status === "authenticated" && session.accessToken) {
+      setTimeout(() => router.push("/room"), 100)
+      console.log("PROD JWT:", session.accessToken);
     }
-  }, [status, router])
+  }, [status, router, session?.accessToken])
 
   if (status === "authenticated") {
     return null;

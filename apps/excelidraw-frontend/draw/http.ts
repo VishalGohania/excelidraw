@@ -3,6 +3,7 @@ import axios from "axios";
 
 export const http = axios.create({
   baseURL: HTTP_BACKEND,
+  timeout: 15000,
 });
 
 export async function getExistingShapes(roomId: string) {
@@ -13,12 +14,12 @@ export async function getExistingShapes(roomId: string) {
 
     const messages = res.data?.data?.messages || [];
 
-    if(!Array.isArray(messages)) {
+    if (!Array.isArray(messages)) {
       console.warn("Message is not an array", messages);
       return [];
     }
 
-    const shapes = messages.map((x: {message: string}) => {
+    const shapes = messages.map((x: { message: string }) => {
       try {
         const messageData = JSON.parse(x.message);
         return messageData.shape;
@@ -27,11 +28,11 @@ export async function getExistingShapes(roomId: string) {
         return null;
       }
     }).filter(shape => shape !== null);
-    
+
     return shapes;
   } catch (error) {
     console.error("Failed to fetch existing shapes:", error);
     return [];
   }
-  
+
 }
