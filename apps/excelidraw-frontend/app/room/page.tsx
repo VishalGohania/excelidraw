@@ -27,7 +27,11 @@ export default function RoomPage() {
     const [error, setError] = useState<string | null>(null);
     const [existingRooms, setExistingRooms] = useState<Room[]>([])
 
-
+    useEffect(() => {
+        if (session?.accessToken) {
+            console.log("PROD JWT:", session.accessToken);
+        }
+    }, [session]);
 
     const fetchExistingRooms = useCallback(async () => {
         if (!session?.accessToken) {

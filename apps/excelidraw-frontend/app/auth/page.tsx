@@ -12,16 +12,16 @@ export default function AuthPage() {
   const searchParams = useSearchParams();
   const formType = useMemo(() => searchParams.get("authType") as SignInFlow, [searchParams]
   )
-  const session = useSession();
+  const { data: session, status } = useSession();
   const router = useRouter();
 
   useEffect(() => {
-    if (session.status === "authenticated") {
+    if (status === "authenticated") {
       router.push("/room")
     }
-  }, [session.status, router])
+  }, [status, router])
 
-  if (session.status === "authenticated") {
+  if (status === "authenticated") {
     return null;
   }
   return (
